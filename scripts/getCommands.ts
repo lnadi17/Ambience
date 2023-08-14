@@ -1,44 +1,24 @@
-import Discord from 'discord.js';
+import * as Discord from 'discord.js';
 
-import { matchCategoryByName } from "./matchCommands.js";
-import songsData from '../data/songs.js';
-import commandsData from "../data/commands.js";
+import { matchCategoryByName } from "./matchCommands";
+import songsData from '../data/songs';
+import commandsData from "../data/commands";
 
-const categories = songsData.categories;;
+const categories = songsData.categories;
 const songs = getSongsFromData(categories);
 const commands = commandsData.commands;
 
-export function getKeyWord(keyword, command) {
-    let prefixKeyword = prefix + keyword;
+export function getKeyWord(keyword: string, command: string) {
+    let prefixKeyword = '/' + keyword;
     let prompt = command.slice(0, keyword.length + 1);
-    if (prompt == prefixKeyword && command.split(" ").length > 1) {
-        return true;
-    }
-
-    return false;
+    return prompt == prefixKeyword && command.split(" ").length > 1;
 }
 
-export function getCommandWithPrefix(command){
-    let currentPrefix = prefix;
-    return currentPrefix + command;
+export function getCommandWithPrefix(command: string){
+    return '/' + command;
 }
 
-export function getPrefix(){
-    return prefix;
-}
-
-export function changePrefix(newPrefix){
-    prefix = newPrefix;
-}
-
-export function modifyMessageForMusic(message){
-    let refinedText = message.content.slice(6, message.length);
-    refinedText = "!play " + refinedText;
-    message.content = refinedText;
-    console.log("dsahkjadsjksd", message.content )
-    return message;
-}
-
+/*
 export function getQueueEmbed(songs){
     let text = `**Now Playing:** ${songs[0].name} \n`;
     if(songs.length > 1){
@@ -58,15 +38,17 @@ export function getQueueEmbed(songs){
 	.setDescription(text);
     return queueEmbed;
 }
+*/
 
-export function getSongsFromData(data) {
-    let songs = [];
-    data.forEach((category) => {
+export function getSongsFromData(data: any) {
+    let songs: any[] = [];
+    data.forEach((category: any) => {
         Array.prototype.push.apply(songs, category.songs);
     })
     return songs;
 }
 
+/*
 export function getSongFromURL(songLink){
     for(let song of songs){
         if(song.link == songLink){
@@ -76,14 +58,17 @@ export function getSongFromURL(songLink){
     return false;
 }
 
-export function getCommandsForCategory(category){
-    let selectedCommands = [];
+ */
+
+export function getCommandsForCategory(category: any){
+    let selectedCommands: any = [];
     commands.forEach((command) => {
         if(command.category == category) selectedCommands.push(command);
     })
     return selectedCommands;
 }
 
+/*
 export function getCommandByName(commandName){
     for(let command of commands){
         if(command.command == commandName) return command;
@@ -125,3 +110,4 @@ export function getRandomSound(){
     var item = allSounds[Math.floor(Math.random()*allSounds.length)];
     return item;
 }
+*/

@@ -2,10 +2,9 @@
   "name": "ambience",
   "version": "1.0.0",
   "description": "Ambience is a Discord bot designated to help you focus and work with the use of calming and soothing background noise.",
-  "main": "index.js",
-  "type": "module",
+  "main": "index.ts",
   "scripts": {
-    "start": "node index.js",
+    "start": "ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "register": "node register.js"
   },
@@ -21,10 +20,12 @@
   "homepage": "https://github.com/angelina-tsuboi/Ambience/blob/master/README.md",
   "dependencies": {
     "@discordjs/voice": "^0.16.0",
+    "discord-api-types": "^0.37.53",
     "discord.js": "^14.12.1",
     "sodium": "^3.0.2"
   },
   "devDependencies": {
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "ts-node": "^10.9.1"
   }
 }

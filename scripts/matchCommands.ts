@@ -1,6 +1,6 @@
-import { getPurifiedInput, getSongsFromData, getSongsForCategory } from "./getCommands.js";
-import songsData from '../data/songs.js';
-import playlistData from '../data/playlist.js';
+import { getPurifiedInput, getSongsFromData, getSongsForCategory } from "./getCommands.ts";
+import songsData from '../data/songs';
+import playlistData from '../data/playlist';
 const categories = songsData.categories;
 var songs = getSongsFromData(categories);
 
