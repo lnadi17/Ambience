@@ -2,11 +2,8 @@ import {APIEmbed, Client, GatewayIntentBits, PermissionsBitField, TextChannel} f
 import {ChannelType, ActivityType} from 'discord-api-types/v10';
 require('dotenv').config();
 
-import commandsInput from './data/commands';
 import {listCommands, listInvite} from './scripts/listCommands';
 
-const commandsData = commandsInput.commands;
-let commands = commandsData.map((c: any) => c.command);
 let configToken = process.env.DJS_TOKEN;
 
 const bot = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates]});
