@@ -1,9 +1,9 @@
-import Discord from 'discord.js';
-import pkg from 'discord-music-player';
-const { Player } = pkg;
+import {Client, GatewayIntentBits} from 'discord.js';
+import dotenv from 'dotenv'
+dotenv.config()
+
 import commandsInput from './data/commands.js';
 import playlistTracks from './data/playlist.js';
-// import configInputs from './data/config.js';
 import { getKeyWord, getSongFromURL, getQueueEmbed, getCommandByName, getPrefix, modifyMessageForMusic, getAllSounds, getIfValidCommand, getCommandWithPrefix, getRandomSound } from './scripts/getCommands.js';
 import { listSearchResults, listCategorySongs, listCategories, listCommands, soundSearch, listSettings, listHelpSettings, getCommandInfo, listValidPrefixes, listInvite, listAllSounds, listCustomSongInformation, listInvalidCommand, listEasterEggContent, listLoadingMessage } from './scripts/listCommands.js';
 import { matchSongByName, matchSongByCategoryIndex, matchCategoryByName, matchPlaylistSong } from './scripts/matchCommands.js';
@@ -11,17 +11,20 @@ import { matchSongByName, matchSongByCategoryIndex, matchCategoryByName, matchPl
 const commandsData = commandsInput.commands;
 let commands = commandsData.map(c => c.command);
 let configToken = process.env.DJS_TOKEN;
-let configPrefix = process.env.PREFIX;
-/* USE this when running on your own for testing
-configToken = configInputs["DJS_TOKEN"];
-configPrefix = configInputs["PREFIX"];
-*/
 
-var bot = new Discord.Client();
-const player = new Player(bot);
-bot.player = player;
+const bot = new Client({ intents: [GatewayIntentBits.Guilds] });
 
+bot.on('interactionCreate', async interaction => {
+  if (!interaction.isChatInputCommand()) return;
 
+  if (interaction.commandName === 'ping') {
+    await interaction.reply('Pong!');
+  }
+});
+
+bot.login(configToken);
+
+/*
 bot.on('guildCreate', guild => {
   const channel = guild.channels.cache.find(channel => channel.type === 'text' && channel.permissionsFor(guild.me).has('SEND_MESSAGES'))
   channel.send(listInvite());
@@ -397,3 +400,4 @@ export function getProperSoundContent(song) {
   }
   return song.name;
 }
+*/

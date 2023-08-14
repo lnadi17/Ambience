@@ -1,15 +1,12 @@
-import { matchCategoryByName } from "./matchCommands.js";
 import Discord from 'discord.js';
+
+import { matchCategoryByName } from "./matchCommands.js";
 import songsData from '../data/songs.js';
 import commandsData from "../data/commands.js";
-// import configInput from "../data/config.js";
-const categories = songsData.categories;;
-var songs = getSongsFromData(categories);
-var commands = commandsData.commands;
-let prefix = process.env.PREFIX;
-// use this for testing
-// prefix = configInput["PREFIX"];
 
+const categories = songsData.categories;;
+const songs = getSongsFromData(categories);
+const commands = commandsData.commands;
 
 export function getKeyWord(keyword, command) {
     let prefixKeyword = prefix + keyword;

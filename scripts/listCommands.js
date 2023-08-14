@@ -1,7 +1,7 @@
 import { matchCategoryByName } from "./matchCommands.js";
 import Discord from 'discord.js';
 import { getPurifiedInput, getSongsFromData, getCommandsForCategory, getCommandWithPrefix } from "./getCommands.js";
-import { refineContent } from '../index.js';
+// import { refineContent } from '../index.js';
 import commandsInput from '../data/commands.js';
 const commandsData = commandsInput.commands;
 let commands = commandsData.map(c => c.command);
