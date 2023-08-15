@@ -1,14 +1,13 @@
-import {Client, Events, GatewayIntentBits, PermissionsBitField, TextChannel} from 'discord.js';
-import type {Readable} from 'node:stream';
+import {Client, Events, GatewayIntentBits, PermissionsBitField, TextChannel, VoiceBasedChannel} from 'discord.js';
+import {join} from 'path';
 import {
     createAudioPlayer,
-    createAudioResource,
+    createAudioResource, entersState,
     getVoiceConnection,
     joinVoiceChannel, NoSubscriberBehavior,
-    StreamType
+    StreamType, VoiceConnectionStatus
 } from '@discordjs/voice';
 import {ChannelType, ActivityType} from 'discord-api-types/v10';
-import ytdl from 'discord-ytdl-core';
 
 require('dotenv').config();
 
@@ -24,14 +23,24 @@ const player = createAudioPlayer({
     }
 });
 
+async function connectToChannel(channel: VoiceBasedChannel) {
+    const connection = joinVoiceChannel({
+        channelId: channel.id,
+        guildId: channel.guild.id,
+        adapterCreator: channel.guild.voiceAdapterCreator,
+    });
+    try {
+        await entersState(connection, VoiceConnectionStatus.Ready, 30_000);
+        return connection;
+    } catch (error) {
+        connection.destroy();
+        throw error;
+    }
+}
+
 function attachRecorder() {
-    player.play(
-        createAudioResource(ytdl("https://www.youtube.com/watch?v=9_-uG2PG34c", {
-            filter: "audioonly",
-            opusEncoded: true,
-            encoderArgs: ['-af', 'bass=g=10,dynaudnorm=f=200']
-        }) as Readable, {inputType: StreamType.Opus, inlineVolume: true})
-    );
+    // TODO: Use ogg or webm format for better performance
+    player.play(createAudioResource(join(__dirname, 'data/2min30sec.mp3')));
     console.log("Recorder attached!")
 }
 
@@ -43,7 +52,7 @@ bot.on(Events.VoiceStateUpdate, (oldState, newState) => {
     }
 });
 
-bot.on(Events.InteractionCreate, interaction => {
+bot.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     if (interaction.commandName === 'ping') {
@@ -51,26 +60,13 @@ bot.on(Events.InteractionCreate, interaction => {
     }
 
     if (interaction.commandName === 'play') {
-        const sourceChannelType = interaction.channel?.type;
-        if (sourceChannelType !== ChannelType.GuildVoice) {
-            // Check if interaction sender is in a voice channel
-            interaction.guild?.members.fetch(interaction.user).then(member => {
-                if (member.voice.channel) {
-                    interaction.reply("You are in a voice channel but are texting from text channel");
-
-                    const connection = joinVoiceChannel({
-                        channelId: member.voice.channel.id,
-                        guildId: member.voice.channel.guild.id,
-                        adapterCreator: member.voice.channel.guild.voiceAdapterCreator
-                    });
-
-                    connection.subscribe(player);
-                } else {
-                    interaction.reply("You're not in a voice channel");
-                }
-            });
+        const member = await interaction.guild?.members.fetch(interaction.user);
+        if (member?.voice.channel) {
+            const connection = await connectToChannel(member.voice.channel);
+            connection.subscribe(player);
+            interaction.reply("Playing");
         } else {
-            interaction.reply("You are in a voice channel");
+            interaction.reply("You're not in a voice channel");
         }
     }
 });
