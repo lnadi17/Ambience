@@ -1,14 +1,10 @@
 import * as Discord from 'discord.js';
 
-import { matchCategoryByName } from "./matchCommands";
+// import { matchCategoryByName } from "./matchCommands";
 import songsData from '../data/songs';
-import commandsData from "../data/commands";
+import commands from "../data/commands";
 
-const categories = songsData.categories;
-const songs = getSongsFromData(categories);
-const commands = commandsData.commands;
-
-export function getKeyWord(keyword: string, command: string) {
+export function getKeyWord(keyword, command: string) {
     let prefixKeyword = '/' + keyword;
     let prompt = command.slice(0, keyword.length + 1);
     return prompt == prefixKeyword && command.split(" ").length > 1;

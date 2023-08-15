@@ -7,6 +7,10 @@ const commands = [
         name: 'ping',
         description: 'Replies with Pong!',
     },
+    {
+        name: 'play',
+        description: 'Play a song in your channel!',
+    },
 ];
 
 const rest = new REST({ version: '10' }).setToken(process.env.DJS_TOKEN);

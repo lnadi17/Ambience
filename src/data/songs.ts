@@ -330,3 +330,5 @@ const categories: SongCategory[] = [
         ]
     }
 ]
+
+export default categories;

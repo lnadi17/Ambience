@@ -1,13 +1,14 @@
 import {getCommandWithPrefix} from "./getCommands";
 import commandsInput from '../data/commands';
 import * as Discord from "discord.js";
+import commands from "../data/commands";
+import {Song} from "../types/Song";
+import {Command} from "../types/Command";
 
-const commandsData = commandsInput.commands;
-const commands = commandsData.map(c => c.command);
 // const categories = songsData.categories;
 // const songs = getSongsFromData(categories);
 
-export function listInvite() {
+export function getInviteEmbed() {
     return new Discord.EmbedBuilder()
         .setColor('#0099ff')
         .setTitle('Thanks for Inviting Ambience!')
@@ -136,7 +137,7 @@ export function listAllSounds(sounds) {
 
 */
 
-export function listSongInformation(song) {
+export function listSongInformation(song: Song) {
     const songInfoEmbed = new Discord.EmbedBuilder()
         .setColor('#0099ff')
         .setTitle('⚙️ Ambience Settings')
@@ -171,13 +172,13 @@ export function listValidPrefixes() {
     return text;
 }
 
-export function getCommandInfo(command) {
+export function getCommandInfo(command: Command) {
     const commandInfoEmbed = new Discord.EmbedBuilder()
         .setColor('#0099ff')
-        .setTitle(`The **${command.command}** command: `)
+        .setTitle(`The **${command.name}** command: `)
         .setDescription(command.description)
         .addFields(
-            {name: 'To use the command, type: ', value: `\`\`${getCommandWithPrefix(command.code)}\`\``},
+            {name: 'To use the command, type: ', value: `\`\`${getCommandWithPrefix(command.usage)}\`\``},
         )
     return commandInfoEmbed;
 }

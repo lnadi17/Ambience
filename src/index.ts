@@ -1,65 +1,128 @@
-import {APIEmbed, Client, GatewayIntentBits, PermissionsBitField, TextChannel} from 'discord.js';
+import {Client, Events, GatewayIntentBits, PermissionsBitField, TextChannel} from 'discord.js';
+import type {Readable} from 'node:stream';
+import {
+    createAudioPlayer,
+    createAudioResource,
+    getVoiceConnection,
+    joinVoiceChannel, NoSubscriberBehavior,
+    StreamType
+} from '@discordjs/voice';
 import {ChannelType, ActivityType} from 'discord-api-types/v10';
+import ytdl from 'discord-ytdl-core';
+
 require('dotenv').config();
 
-import {listCommands, listInvite} from './scripts/listCommands';
+import {listCommands, getInviteEmbed} from './scripts/listCommands';
 
-let configToken = process.env.DJS_TOKEN;
+const configToken = process.env.TOKEN;
 
 const bot = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates]});
 
-bot.on('interactionCreate', interaction => {
+const player = createAudioPlayer({
+    behaviors: {
+        noSubscriber: NoSubscriberBehavior.Pause,
+    }
+});
+
+function attachRecorder() {
+    player.play(
+        createAudioResource(ytdl("https://www.youtube.com/watch?v=9_-uG2PG34c", {
+            filter: "audioonly",
+            opusEncoded: true,
+            encoderArgs: ['-af', 'bass=g=10,dynaudnorm=f=200']
+        }) as Readable, {inputType: StreamType.Opus, inlineVolume: true})
+    );
+    console.log("Recorder attached!")
+}
+
+bot.on(Events.VoiceStateUpdate, (oldState, newState) => {
+    // Disconnect from voice channel if no one is in it
+    if (oldState.channel?.members.size === 1) {
+        const connection = getVoiceConnection(oldState.guild.id);
+        connection?.destroy()
+    }
+});
+
+bot.on(Events.InteractionCreate, interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     if (interaction.commandName === 'ping') {
         interaction.reply({embeds: [listCommands()]});
     }
+
+    if (interaction.commandName === 'play') {
+        const sourceChannelType = interaction.channel?.type;
+        if (sourceChannelType !== ChannelType.GuildVoice) {
+            // Check if interaction sender is in a voice channel
+            interaction.guild?.members.fetch(interaction.user).then(member => {
+                if (member.voice.channel) {
+                    interaction.reply("You are in a voice channel but are texting from text channel");
+
+                    const connection = joinVoiceChannel({
+                        channelId: member.voice.channel.id,
+                        guildId: member.voice.channel.guild.id,
+                        adapterCreator: member.voice.channel.guild.voiceAdapterCreator
+                    });
+
+                    connection.subscribe(player);
+                } else {
+                    interaction.reply("You're not in a voice channel");
+                }
+            });
+        } else {
+            interaction.reply("You are in a voice channel");
+        }
+    }
 });
 
 // Post a message when added to a server
-bot.on('guildCreate', guild => {
+bot.on(Events.GuildCreate, guild => {
     const channel: TextChannel | undefined = guild.channels.cache.find(channel => {
         const botHasSendMessagePermissions = guild.members.me!.permissionsIn(channel).has(PermissionsBitField.Flags.SendMessages);
         return channel.type === ChannelType.GuildText && botHasSendMessagePermissions;
     }) as TextChannel;
 
     if (channel) {
-        channel.send({embeds: [listInvite()]});
+        channel.send({embeds: [getInviteEmbed()]});
     }
 });
 
-bot.on("ready", () => {
+// Log when the bot is ready
+bot.on(Events.ClientReady, () => {
     console.log("🎶 I am ready to Play 🎶");
+    attachRecorder();
 
     bot.user!.setStatus('online')
     bot.user!.setPresence({
         activities: [
             {
-                name: 'with your mom',
-                type: ActivityType.Streaming
+                name: 'your mom',
+                type: ActivityType.Watching
             }
         ]
     });
 });
 
+
+// bot.player
+//     .on('songAdd', (message, queue, song: Song) => {
+//         // if (matchPlaylistSong(message.content.slice(6, message.content.length))) return;
+//         // message.channel.send(`**${song.title}** has been added to the queue!`);
+//     })
+//     .on('songFirst', (message, song) => {
+//         // let username = song.queue.initMessage.author.username + "#" + song.queue.initMessage.author.discriminator;
+//         // let songName = song.name;
+//         // let selectedSong = getSongFromURL(song.requestedBy);
+//         // if (selectedSong) {
+//         //     songName = selectedSong.name;
+//         // }
+//         //
+//         // message.channel.send(listCustomSongInformation(songName, song.url, song.thumbnail, song.queue.volume, song.author, song.duration, username));
+//     })
+
 bot.login(configToken);
 
-
 /*
-bot.player.on('songAdd', (message, queue, song) => {
-    if (matchPlaylistSong(message.content.slice(6, message.content.length))) return;
-    message.channel.send(`**${getProperSoundContent(song)}** has been added to the queue!`);
-})
-    .on('songFirst', (message, song) => {
-        let username = song.queue.initMessage.author.username + "#" + song.queue.initMessage.author.discriminator;
-        let songName = song.name;
-        let selectedSong = getSongFromURL(song.requestedBy);
-        if (selectedSong) {
-            songName = selectedSong.name;
-        }
-
-        message.channel.send(listCustomSongInformation(songName, song.url, song.thumbnail, song.queue.volume, song.author, song.duration, username));
-    })
 
 
 bot.on('message', async (message) => {
@@ -297,7 +360,6 @@ bot.on('message', async (message) => {
 });
 
 
-bot.login(configToken);
 
 // Helper Functions
 
