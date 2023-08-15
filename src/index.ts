@@ -1,12 +1,8 @@
 import {Events, GatewayIntentBits, PermissionsBitField, TextChannel} from 'discord.js';
-import * as path from 'path';
-import {join} from 'path';
 import {getVoiceConnection, NoSubscriberBehavior} from '@discordjs/voice';
 import {ActivityType, ChannelType} from 'discord-api-types/v10';
 import {getInviteEmbed} from './scripts/getEmbeds';
 import {AmbienceClient} from "./types/AmbienceClient";
-import * as fs from "fs";
-import {Command} from "./types/Command";
 import {attachRecorder, getAllCommands} from "./utils";
 
 require('dotenv').config();
@@ -49,73 +45,7 @@ bot.on(Events.InteractionCreate, async interaction => {
             await interaction.reply({content: 'There was an error while executing this command!', ephemeral: true});
         }
     }
-    // if (getKeyWord('help', message.content) || getKeyWord('command', message.content)) {
-    // if (interaction.commandName === 'help') {
-    //     if (commands.includes()) {
-    //         message.channel.send(getCommandInfo(getCommandByName(content)));
-    //
-    //     } else {
-    //         message.channel.send("Command not found for " + content + ". \n Type `$help` to see all command names");
-    //     }
-    //
-    //     return;
-    // }
 
-    // if (interaction.commandName === 'categories') {
-    //     // check categories - compile early
-    //     if (matchCategoryByName(content)) {
-    //         message.channel.send(listCategorySongs(content));
-    //         return;
-    //     }
-    //     message.channel.send("Category not found for " + content + ". \n Type `" + getCommandWithPrefix('commands') + "` to see all available categories");
-    //     return;
-    // }
-
-    //
-    //
-    // if (getKeyWord('custom', message.content)) {
-    //     playCustomSong(message, refineContent(message.content));
-    // }
-    //
-    // if (getKeyWord('easter', message.content)) {
-    //     let content = refineContent(message.content);
-    //     playCustomSong(message, listEasterEggContent(content));
-    //     return;
-    // }
-
-    // if (getKeyWord('play', message.content)) {
-
-    //   return;
-    // }
-
-    // if (getKeyWord(('setvolume'), message.content)) {
-    //     let content = message.content.split(" ")[1];
-    //     let contentArray = message.content.split(" ");
-    //     let refinedContent = contentArray.slice(1, contentArray.length);
-    //     content = refinedContent.join(" ");
-    //     try {
-    //         let isDone = await bot.player.setVolume(message, parseInt(content));
-    //         if (isDone)
-    //             message.channel.send(`🔊 Volume set to ${args[0]}!`);
-    //     } catch (err) {
-    //         console.log("something went wrong");
-    //         message.channel.send("❌ You must play a sound to use this command.");
-    //     }
-    //
-    //
-    //     return;
-    // }
-    //
-    // if (getKeyWord(('search'), message.content)) {
-    //     message.channel.send(listSearchResults(soundSearch(message.content)));
-    //     return;
-    // }
-    //
-    // if (getKeyWord(('settings'), message.content)) {
-    //     let content = refineContent(message.content);
-    //     return;
-    // }
-    //
     // switch (command) {
     //     case 'pause':
     //         let chosenSong = bot.player.pause(message);
@@ -124,20 +54,12 @@ bot.on(Events.InteractionCreate, async interaction => {
     //         }
     //         break;
     //
-    //     case 'sounds':
-    //         message.channel.send(listAllSounds(getAllSounds()));
-    //         break;
-    //
     //     case 'random':
     //         let randomSound = getRandomSound();
     //         message.content = `!play ${randomSound.link}`
     //         playAmbienceSong(message, args, randomSound.link);
     //         break;
-    //
-    //     case 'playlist':
-    //         playPlaylist(message, args)
-    //         break;
-    //
+
     //     case 'resume':
     //         let chosenSong2 = bot.player.resume(message);
     //         if (chosenSong2) {
@@ -167,27 +89,6 @@ bot.on(Events.InteractionCreate, async interaction => {
     //         });
     //         if (progressBar)
     //             message.channel.send(progressBar);
-    //         break;
-    //
-    //     case 'remove':
-    //         let songID = parseInt(args[0]) - 1;
-    //
-    //         let chosenSong4 = bot.player.remove(message, songID);
-    //         if (chosenSong4)
-    //             message.channel.send(`🗑 Removed song **${getProperSoundContent(chosenSong4)}** (${args[0]}) from the Queue!`);
-    //         break;
-    //
-    //     case 'queue':
-    //         let queue = bot.player.getQueue(message);
-    //         if (queue)
-    //             message.channel.send(getQueueEmbed(queue.songs));
-    //         break;
-    //
-    //     case 'resume':
-    //         let chosenSong5 = client.player.resume(message);
-    //         if (chosenSong5) {
-    //             message.channel.send(`⏯ **${getProperSoundContent(chosenSong5.name)}** was resumed!`);
-    //         }
     //         break;
     //
     // }
