@@ -22,9 +22,9 @@ export default {
     execute: async (interaction) => {
         const categoryName = interaction.options.getString('category');
         if (categoryName) {
-            await interaction.reply({embeds: [listCategorySongs(categoryName)]})
+            await interaction.reply({embeds: [listCategorySongs(categoryName)], ephemeral: true})
         } else {
-            await interaction.reply({embeds: [listCategories()]});
+            await interaction.reply({embeds: [listCategories()], ephemeral: true});
         }
     }
 }

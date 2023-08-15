@@ -25,9 +25,9 @@ export default {
         const commandName = interaction.options.getString("command");
         const command = bot.commands.get(commandName);
         if (command) {
-            await interaction.reply({embeds: [getCommandInfo(command)]});
+            await interaction.reply({embeds: [getCommandInfo(command)], ephemeral: true});
         } else {
-            await interaction.reply({embeds: [getHelpEmbed(bot)]});
+            await interaction.reply({embeds: [getHelpEmbed(bot)], ephemeral: true});
         }
     }
 }

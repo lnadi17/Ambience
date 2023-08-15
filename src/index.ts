@@ -111,39 +111,12 @@ bot.on(Events.InteractionCreate, async interaction => {
     //     return;
     // }
     //
-    // if (getKeyWord(('prefix'), message.content)) {
-    //     let content = refineContent(message.content);
-    //     let validPrefixes = ['!', '@', '#', '$', '%', '&', '*', '(', ')', '\\', '/', '.', '~'];
-    //     if (!validPrefixes.includes(content)) {
-    //         message.channel.send(listValidPrefixes());
-    //         return;
-    //     }
-    //     process.env.PREFIX = content;
-    //     message.channel.send(`✅ Prefix set to ${content}`);
-    // }
-    //
     // if (getKeyWord(('settings'), message.content)) {
     //     let content = refineContent(message.content);
     //     return;
     // }
     //
     // switch (command) {
-    //     case 'help':
-    //         message.channel.send(listHelpSettings());
-    //         break;
-    //
-    //     case 'settings':
-    //         message.channel.send(listSettings());
-    //         break;
-    //
-    //     case 'commands':
-    //         message.channel.send(listCommands());
-    //         break;
-    //
-    //     case 'categories':
-    //         message.channel.send(listCategories());
-    //         break;
-    //
     //     case 'pause':
     //         let chosenSong = bot.player.pause(message);
     //         if (chosenSong) {
@@ -172,13 +145,6 @@ bot.on(Events.InteractionCreate, async interaction => {
     //         }
     //         break;
     //
-    //     case 'skip':
-    //         let chosenSong3 = bot.player.skip(message);
-    //         if (chosenSong3) {
-    //             message.channel.send(`👉 **${getProperSoundContent(chosenSong3)}** was skipped!`);
-    //         }
-    //         break;
-    //
     //     case 'stop':
     //         let isComplete = bot.player.stop(message);
     //         if (isComplete) {
@@ -203,21 +169,6 @@ bot.on(Events.InteractionCreate, async interaction => {
     //             message.channel.send(progressBar);
     //         break;
     //
-    //     case 'repeatqueue':
-    //         let status = bot.player.setQueueRepeatMode(message, true);
-    //         if (status === null)
-    //             break;
-    //         message.channel.send(`🔁 Queue will be repeated!`);
-    //         break;
-    //
-    //
-    //     case 'disablerepeatqueue':
-    //         let result = bot.player.setQueueRepeatMode(message, false);
-    //         if (result === null)
-    //             break;
-    //         message.channel.send(`✋ Queue will not be longer repeated!`);
-    //         break;
-    //
     //     case 'remove':
     //         let songID = parseInt(args[0]) - 1;
     //
@@ -225,13 +176,6 @@ bot.on(Events.InteractionCreate, async interaction => {
     //         if (chosenSong4)
     //             message.channel.send(`🗑 Removed song **${getProperSoundContent(chosenSong4)}** (${args[0]}) from the Queue!`);
     //         break;
-    //
-    //     case 'shuffle':
-    //         let songs = bot.player.shuffle(message);
-    //         if (songs)
-    //             message.channel.send('🔀 Server Queue was shuffled.');
-    //         break;
-    //
     //
     //     case 'queue':
     //         let queue = bot.player.getQueue(message);

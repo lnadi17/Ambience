@@ -1,8 +1,6 @@
 import {getCommandWithPrefix} from "./getCommands";
 import * as Discord from "discord.js";
-import {Song} from "../types/Song";
 import {Command} from "../types/Command";
-import {SongCategory} from "../types/SongCategory";
 import categories from "../data/songs";
 import {AmbienceClient} from "../types/AmbienceClient";
 
@@ -116,22 +114,23 @@ export function listHelpSettings() {
         .addFields(
             {name: "\n \n \n 🎵  Music Commands", value: musicText},
             {name: "\n 🔊  Sound Commands", value: soundText},
-            {name: "\n 🎶  Queue Settings", value: queueText},
             {name: "\n 🤖  Bot Settings", value: settingsText}
         )
     return helpEmbed;
 }
 
-export function listAllSounds(sounds) {
+*/
+export function listAllSounds() {
+    const sounds = categories.map((category) => category.songs).flat();
     let text = ""
 
     for (let i = 0; i < sounds.length; i++) {
         if (sounds[i]) {
-            text = text.concat(`\`${i + 1})\` ${sounds[i].name} \n`);
+            text = text.concat(`\`${i + 1})\` ${sounds[i].title} \n`);
         }
     }
 
-    const soundsEmbed = new Discord.EmbedBuilder()
+    return new Discord.EmbedBuilder()
         .setColor('#0099ff')
         .setTitle('🎶 Ambience Sounds: ')
         .setDescription(text)
@@ -139,36 +138,8 @@ export function listAllSounds(sounds) {
             name: 'To play a sound type: ',
             value: ` \`\`\`${getCommandWithPrefix("play [sound_name]")} \`\`\` `
         });
-    return soundsEmbed;
 }
 
-*/
-
-export function listSongInformation(song: Song) {
-    const songInfoEmbed = new Discord.EmbedBuilder()
-        .setColor('#0099ff')
-        .setTitle('⚙️ Ambience Settings')
-        .setDescription("Use the command ``$command [option_name]`` to see more information about the option. \n")
-        .setURL('https://discord.js.org/')
-        .addFields(
-            {
-                name: '\n 📄 View Commands \u200B',
-                value: ` \`\`\` ${getCommandWithPrefix("commands")} \`\`\` `,
-                inline: true
-            },
-            {name: '❓ Get Help', value: ` \`\`\` ${getCommandWithPrefix("command help")} \`\`\` `, inline: true},
-            {
-                name: '🔈 Set Volume \u200B',
-                value: ` \`\`\` ${getCommandWithPrefix("command setVolume")} \`\`\` `,
-                inline: true
-            },
-            {
-                name: '\n 🔍 FAQ and Support',
-                value: 'Please join the [Ambience server](https://discord.gg/w3Tp9x88Nw) for support'
-            },
-        )
-    return songInfoEmbed;
-}
 
 export function getCommandInfo(command: Command) {
     return new Discord.EmbedBuilder()
