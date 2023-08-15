@@ -1,9 +1,10 @@
 import {getCommandWithPrefix} from "./getCommands";
-import commandsInput from '../data/commands';
 import * as Discord from "discord.js";
-import commands from "../data/commands";
 import {Song} from "../types/Song";
 import {Command} from "../types/Command";
+import {SongCategory} from "../types/SongCategory";
+import categories from "../data/songs";
+import {AmbienceClient} from "../types/AmbienceClient";
 
 // const categories = songsData.categories;
 // const songs = getSongsFromData(categories);
@@ -28,10 +29,10 @@ export function getInviteEmbed() {
         ]);
 }
 
-export function listCommands() {
+export function getHelpEmbed(bot: AmbienceClient) {
     let text = "Here is a list of my commands: ";
-    commands.forEach((command) => {
-        text = text.concat(` \n - ${command}`)
+    bot.commands.forEach((command) => {
+        text = text.concat(` \n - ${command.data.name}`)
     });
     return new Discord.EmbedBuilder()
         .setColor('#0099ff')
@@ -39,26 +40,31 @@ export function listCommands() {
         .setDescription(text)
         .addFields({
             name: `To get more information about a specific command type: `,
-            value: ` \`\`\` ${getCommandWithPrefix("command [command_name]")} \`\`\` `
+            value: ` \`\`\` ${getCommandWithPrefix("help [command_name]")} \`\`\` `
         })
 }
 
-/*
-export function listCategorySongs(content) {
-    let matchedCategory = matchCategoryByName(content);
-    let text = "";
+export function listCategorySongs(categoryName: string) {
+    let category = categories.find((category) => category.name === categoryName);
+    if (!category) {
+        throw new Error(`Category ${categoryName} not found`);
+    }
+
     let count = 1;
-    matchedCategory.songs.forEach((song) => {
-        text = text.concat(` \n\n ${count})  ${song.name}`);
+    let text = "";
+    category.songs.forEach((song) => {
+        text = text.concat(` \n\n ${count})  ${song.title}`);
         count++
     });
     text = text.concat("\n \u200b ");
-    const categorySongsEmbed = new Discord.EmbedBuilder()
+    return new Discord.EmbedBuilder()
         .setColor('#0099ff')
-        .setTitle(`${matchedCategory.emoji}  Sounds for ${matchedCategory.name} category: `)
+        .setTitle(`${category.emoji}  Sounds for ${category.name} category: `)
         .setDescription(text)
-        .addFields(`To play a specific sound type: `, ` \`\`\` ${getCommandWithPrefix("play [sound_name]")} \`\`\` or \`\`\` ${getCommandWithPrefix("play [category_name] [sound_index]")} \`\`\``)
-    return categorySongsEmbed;
+        .addFields({
+            name: `To play a specific sound type: `,
+            value: ` \`\`\` ${getCommandWithPrefix("play [sound_name]")} \`\`\``
+        });
 }
 
 export function listCategories() {
@@ -67,14 +73,15 @@ export function listCategories() {
         text = text.concat(` \n\n ${category.emoji} \u200b ${category.name}`)
     })
     text = text.concat("\n \u200b ");
-    const categoryEmbed = new Discord.EmbedBuilder()
+    return new Discord.EmbedBuilder()
         .setColor('#0099ff')
         .setTitle('Sound Categories')
         .setDescription(text)
-        .addField(`To see sounds within a category type: `, ` \`\`\` ${getCommandWithPrefix("categories [category_name]")} \`\`\` `)
-    return categoryEmbed;
+        .addFields({
+            name: `To see sounds within a category type: `,
+            value: ` \`\`\` ${getCommandWithPrefix("categories [category_name]")} \`\`\` `
+        });
 }
-*/
 
 
 /*
@@ -163,22 +170,12 @@ export function listSongInformation(song: Song) {
     return songInfoEmbed;
 }
 
-export function listValidPrefixes() {
-    let text = "Invalid Prefix. Please use one of the following prefixes:";
-    let validPrefixes = ['!', '@', '#', '$', '%', '&', '*', '(', ')', '\\', '/', '.', '~'];
-    for (let i = 0; i < validPrefixes.length; i++) {
-        text = text.concat(`\n ${i + 1})  ${validPrefixes[i]}`)
-    }
-    return text;
-}
-
 export function getCommandInfo(command: Command) {
-    const commandInfoEmbed = new Discord.EmbedBuilder()
+    return new Discord.EmbedBuilder()
         .setColor('#0099ff')
-        .setTitle(`The **${command.name}** command: `)
-        .setDescription(command.description)
+        .setTitle(`The **${command.data.name}** command: `)
+        .setDescription(command.data.description)
         .addFields(
-            {name: 'To use the command, type: ', value: `\`\`${getCommandWithPrefix(command.usage)}\`\``},
-        )
-    return commandInfoEmbed;
+            {name: 'To use the command, type: ', value: `\`\`${command.usage}\`\``},
+        );
 }

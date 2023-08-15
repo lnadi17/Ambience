@@ -1,48 +1,25 @@
-import {Client, Events, GatewayIntentBits, PermissionsBitField, TextChannel, VoiceBasedChannel} from 'discord.js';
+import {Events, GatewayIntentBits, PermissionsBitField, TextChannel} from 'discord.js';
+import * as path from 'path';
 import {join} from 'path';
-import {
-    createAudioPlayer,
-    createAudioResource, entersState,
-    getVoiceConnection,
-    joinVoiceChannel, NoSubscriberBehavior,
-    StreamType, VoiceConnectionStatus
-} from '@discordjs/voice';
-import {ChannelType, ActivityType} from 'discord-api-types/v10';
+import {getVoiceConnection, NoSubscriberBehavior} from '@discordjs/voice';
+import {ActivityType, ChannelType} from 'discord-api-types/v10';
+import {getInviteEmbed} from './scripts/getEmbeds';
+import {AmbienceClient} from "./types/AmbienceClient";
+import * as fs from "fs";
+import {Command} from "./types/Command";
+import {attachRecorder, getAllCommands} from "./utils";
 
 require('dotenv').config();
 
-import {listCommands, getInviteEmbed} from './scripts/listCommands';
-
 const configToken = process.env.TOKEN;
+const bot = new AmbienceClient({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates]});
 
-const bot = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates]});
-
-const player = createAudioPlayer({
-    behaviors: {
-        noSubscriber: NoSubscriberBehavior.Pause,
-    }
-});
-
-async function connectToChannel(channel: VoiceBasedChannel) {
-    const connection = joinVoiceChannel({
-        channelId: channel.id,
-        guildId: channel.guild.id,
-        adapterCreator: channel.guild.voiceAdapterCreator,
-    });
-    try {
-        await entersState(connection, VoiceConnectionStatus.Ready, 30_000);
-        return connection;
-    } catch (error) {
-        connection.destroy();
-        throw error;
-    }
-}
-
-function attachRecorder() {
-    // TODO: Use ogg or webm format for better performance
-    player.play(createAudioResource(join(__dirname, 'data/2min30sec.mp3')));
-    console.log("Recorder attached!")
-}
+// Load all commands and attach them to the bot
+getAllCommands().then((commands) => {
+    commands.forEach((command) => {
+        bot.commands.set(command.data.name, command);
+    })
+}).catch(error => console.log("Error while loading commands:", error));
 
 bot.on(Events.VoiceStateUpdate, (oldState, newState) => {
     // Disconnect from voice channel if no one is in it
@@ -55,20 +32,221 @@ bot.on(Events.VoiceStateUpdate, (oldState, newState) => {
 bot.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
-    if (interaction.commandName === 'ping') {
-        interaction.reply({embeds: [listCommands()]});
+    const command = (interaction.client as AmbienceClient).commands.get(interaction.commandName);
+
+    if (!command) {
+        console.error(`No command matching ${interaction.commandName} was found.`);
+        return;
     }
 
-    if (interaction.commandName === 'play') {
-        const member = await interaction.guild?.members.fetch(interaction.user);
-        if (member?.voice.channel) {
-            const connection = await connectToChannel(member.voice.channel);
-            connection.subscribe(player);
-            interaction.reply("Playing");
+    try {
+        await command.execute(interaction, bot);
+    } catch (error) {
+        console.error(error);
+        if (interaction.replied || interaction.deferred) {
+            await interaction.followUp({content: 'There was an error while executing this command!', ephemeral: true});
         } else {
-            interaction.reply("You're not in a voice channel");
+            await interaction.reply({content: 'There was an error while executing this command!', ephemeral: true});
         }
     }
+    // if (getKeyWord('help', message.content) || getKeyWord('command', message.content)) {
+    // if (interaction.commandName === 'help') {
+    //     if (commands.includes()) {
+    //         message.channel.send(getCommandInfo(getCommandByName(content)));
+    //
+    //     } else {
+    //         message.channel.send("Command not found for " + content + ". \n Type `$help` to see all command names");
+    //     }
+    //
+    //     return;
+    // }
+
+    // if (interaction.commandName === 'categories') {
+    //     // check categories - compile early
+    //     if (matchCategoryByName(content)) {
+    //         message.channel.send(listCategorySongs(content));
+    //         return;
+    //     }
+    //     message.channel.send("Category not found for " + content + ". \n Type `" + getCommandWithPrefix('commands') + "` to see all available categories");
+    //     return;
+    // }
+
+    //
+    //
+    // if (getKeyWord('custom', message.content)) {
+    //     playCustomSong(message, refineContent(message.content));
+    // }
+    //
+    // if (getKeyWord('easter', message.content)) {
+    //     let content = refineContent(message.content);
+    //     playCustomSong(message, listEasterEggContent(content));
+    //     return;
+    // }
+
+    // if (getKeyWord('play', message.content)) {
+
+    //   return;
+    // }
+
+    // if (getKeyWord(('setvolume'), message.content)) {
+    //     let content = message.content.split(" ")[1];
+    //     let contentArray = message.content.split(" ");
+    //     let refinedContent = contentArray.slice(1, contentArray.length);
+    //     content = refinedContent.join(" ");
+    //     try {
+    //         let isDone = await bot.player.setVolume(message, parseInt(content));
+    //         if (isDone)
+    //             message.channel.send(`🔊 Volume set to ${args[0]}!`);
+    //     } catch (err) {
+    //         console.log("something went wrong");
+    //         message.channel.send("❌ You must play a sound to use this command.");
+    //     }
+    //
+    //
+    //     return;
+    // }
+    //
+    // if (getKeyWord(('search'), message.content)) {
+    //     message.channel.send(listSearchResults(soundSearch(message.content)));
+    //     return;
+    // }
+    //
+    // if (getKeyWord(('prefix'), message.content)) {
+    //     let content = refineContent(message.content);
+    //     let validPrefixes = ['!', '@', '#', '$', '%', '&', '*', '(', ')', '\\', '/', '.', '~'];
+    //     if (!validPrefixes.includes(content)) {
+    //         message.channel.send(listValidPrefixes());
+    //         return;
+    //     }
+    //     process.env.PREFIX = content;
+    //     message.channel.send(`✅ Prefix set to ${content}`);
+    // }
+    //
+    // if (getKeyWord(('settings'), message.content)) {
+    //     let content = refineContent(message.content);
+    //     return;
+    // }
+    //
+    // switch (command) {
+    //     case 'help':
+    //         message.channel.send(listHelpSettings());
+    //         break;
+    //
+    //     case 'settings':
+    //         message.channel.send(listSettings());
+    //         break;
+    //
+    //     case 'commands':
+    //         message.channel.send(listCommands());
+    //         break;
+    //
+    //     case 'categories':
+    //         message.channel.send(listCategories());
+    //         break;
+    //
+    //     case 'pause':
+    //         let chosenSong = bot.player.pause(message);
+    //         if (chosenSong) {
+    //             message.channel.send(`⏸ **${getProperSoundContent(chosenSong)}** was paused!`);
+    //         }
+    //         break;
+    //
+    //     case 'sounds':
+    //         message.channel.send(listAllSounds(getAllSounds()));
+    //         break;
+    //
+    //     case 'random':
+    //         let randomSound = getRandomSound();
+    //         message.content = `!play ${randomSound.link}`
+    //         playAmbienceSong(message, args, randomSound.link);
+    //         break;
+    //
+    //     case 'playlist':
+    //         playPlaylist(message, args)
+    //         break;
+    //
+    //     case 'resume':
+    //         let chosenSong2 = bot.player.resume(message);
+    //         if (chosenSong2) {
+    //             message.channel.send(`⏯ **${getProperSoundContent(chosenSong2)}** was resumed!`);
+    //         }
+    //         break;
+    //
+    //     case 'skip':
+    //         let chosenSong3 = bot.player.skip(message);
+    //         if (chosenSong3) {
+    //             message.channel.send(`👉 **${getProperSoundContent(chosenSong3)}** was skipped!`);
+    //         }
+    //         break;
+    //
+    //     case 'stop':
+    //         let isComplete = bot.player.stop(message);
+    //         if (isComplete) {
+    //             message.channel.send('🛑 Sounds stopped, the Queue has been cleared');
+    //         }
+    //         break;
+    //
+    //     case 'loop':
+    //         let toggle = bot.player.toggleLoop(message);
+    //         if (toggle === null) return;
+    //         else if (toggle) message.channel.send(`🔁 ${getProperSoundContent(song)} is now on loop`)
+    //         else message.channel.send(`✋ **${getProperSoundContent(song)}** will no longer be on loop`)
+    //         break;
+    //
+    //     case 'progress':
+    //         let progressBar = bot.player.createProgressBar(message, {
+    //             size: 40,
+    //             block: '\u2588',
+    //             arrow: '\u2591'
+    //         });
+    //         if (progressBar)
+    //             message.channel.send(progressBar);
+    //         break;
+    //
+    //     case 'repeatqueue':
+    //         let status = bot.player.setQueueRepeatMode(message, true);
+    //         if (status === null)
+    //             break;
+    //         message.channel.send(`🔁 Queue will be repeated!`);
+    //         break;
+    //
+    //
+    //     case 'disablerepeatqueue':
+    //         let result = bot.player.setQueueRepeatMode(message, false);
+    //         if (result === null)
+    //             break;
+    //         message.channel.send(`✋ Queue will not be longer repeated!`);
+    //         break;
+    //
+    //     case 'remove':
+    //         let songID = parseInt(args[0]) - 1;
+    //
+    //         let chosenSong4 = bot.player.remove(message, songID);
+    //         if (chosenSong4)
+    //             message.channel.send(`🗑 Removed song **${getProperSoundContent(chosenSong4)}** (${args[0]}) from the Queue!`);
+    //         break;
+    //
+    //     case 'shuffle':
+    //         let songs = bot.player.shuffle(message);
+    //         if (songs)
+    //             message.channel.send('🔀 Server Queue was shuffled.');
+    //         break;
+    //
+    //
+    //     case 'queue':
+    //         let queue = bot.player.getQueue(message);
+    //         if (queue)
+    //             message.channel.send(getQueueEmbed(queue.songs));
+    //         break;
+    //
+    //     case 'resume':
+    //         let chosenSong5 = client.player.resume(message);
+    //         if (chosenSong5) {
+    //             message.channel.send(`⏯ **${getProperSoundContent(chosenSong5.name)}** was resumed!`);
+    //         }
+    //         break;
+    //
+    // }
 });
 
 // Post a message when added to a server
@@ -86,7 +264,7 @@ bot.on(Events.GuildCreate, guild => {
 // Log when the bot is ready
 bot.on(Events.ClientReady, () => {
     console.log("🎶 I am ready to Play 🎶");
-    attachRecorder();
+    attachRecorder(bot.player);
 
     bot.user!.setStatus('online')
     bot.user!.setPresence({
@@ -99,367 +277,4 @@ bot.on(Events.ClientReady, () => {
     });
 });
 
-
-// bot.player
-//     .on('songAdd', (message, queue, song: Song) => {
-//         // if (matchPlaylistSong(message.content.slice(6, message.content.length))) return;
-//         // message.channel.send(`**${song.title}** has been added to the queue!`);
-//     })
-//     .on('songFirst', (message, song) => {
-//         // let username = song.queue.initMessage.author.username + "#" + song.queue.initMessage.author.discriminator;
-//         // let songName = song.name;
-//         // let selectedSong = getSongFromURL(song.requestedBy);
-//         // if (selectedSong) {
-//         //     songName = selectedSong.name;
-//         // }
-//         //
-//         // message.channel.send(listCustomSongInformation(songName, song.url, song.thumbnail, song.queue.volume, song.author, song.duration, username));
-//     })
-
 bot.login(configToken);
-
-/*
-
-
-bot.on('message', async (message) => {
-    const args = message.content.slice(getPrefix().length).trim().split(/ +/g);
-    const command = args.shift().toLowerCase();
-
-    if (message.content[0] != getPrefix()) {
-        return;
-    }
-
-
-    if (command && !getIfValidCommand(command) && command[0] != "*" && message.content[0] == configPrefix && command != "easter") {
-        message.channel.send(listInvalidCommand(command));
-        return;
-    }
-
-
-    if (getKeyWord('help', message.content) || getKeyWord('command', message.content)) {
-        let content = message.content.split(" ")[1];
-        if (commands.includes(content)) {
-            message.channel.send(getCommandInfo(getCommandByName(content)));
-
-        } else {
-            message.channel.send("Command not found for " + content + ". \n Type `$help` to see all command names");
-        }
-
-        return;
-    }
-
-    if (getKeyWord('categories', message.content)) {
-        let content = refineContent(message.content);
-        // check categories - compile early
-        if (matchCategoryByName(content)) {
-            message.channel.send(listCategorySongs(content));
-            return;
-        }
-        message.channel.send("Category not found for " + content + ". \n Type `" + getCommandWithPrefix('commands') + "` to see all available categories");
-        return;
-    }
-
-    if (getKeyWord('custom', message.content)) {
-        playCustomSong(message, refineContent(message.content));
-    }
-
-    if (getKeyWord('easter', message.content)) {
-        let content = refineContent(message.content);
-        playCustomSong(message, listEasterEggContent(content));
-        return;
-    }
-
-    // if (getKeyWord('play', message.content)) {
-
-    //   return;
-    // }
-
-    if (getKeyWord(('setvolume'), message.content)) {
-        let content = message.content.split(" ")[1];
-        let contentArray = message.content.split(" ");
-        let refinedContent = contentArray.slice(1, contentArray.length);
-        content = refinedContent.join(" ");
-        try {
-            let isDone = await bot.player.setVolume(message, parseInt(content));
-            if (isDone)
-                message.channel.send(`🔊 Volume set to ${args[0]}!`);
-        } catch (err) {
-            console.log("something went wrong");
-            message.channel.send("❌ You must play a sound to use this command.");
-        }
-
-
-        return;
-    }
-
-    if (getKeyWord(('search'), message.content)) {
-        message.channel.send(listSearchResults(soundSearch(message.content)));
-        return;
-    }
-
-    if (getKeyWord(('prefix'), message.content)) {
-        let content = refineContent(message.content);
-        let validPrefixes = ['!', '@', '#', '$', '%', '&', '*', '(', ')', '\\', '/', '.', '~'];
-        if (!validPrefixes.includes(content)) {
-            message.channel.send(listValidPrefixes());
-            return;
-        }
-        process.env.PREFIX = content;
-        message.channel.send(`✅ Prefix set to ${content}`);
-    }
-
-    if (getKeyWord(('settings'), message.content)) {
-        let content = refineContent(message.content);
-        return;
-    }
-
-    switch (command) {
-        case 'help':
-            message.channel.send(listHelpSettings());
-            break;
-
-        case 'settings':
-            message.channel.send(listSettings());
-            break;
-
-        case 'commands':
-            message.channel.send(listCommands());
-            break;
-
-        case 'categories':
-            message.channel.send(listCategories());
-            break;
-
-        case 'pause':
-            let chosenSong = bot.player.pause(message);
-            if (chosenSong) {
-                message.channel.send(`⏸ **${getProperSoundContent(chosenSong)}** was paused!`);
-            }
-            break;
-
-        case 'sounds':
-            message.channel.send(listAllSounds(getAllSounds()));
-            break;
-
-        case 'random':
-            let randomSound = getRandomSound();
-            message.content = `!play ${randomSound.link}`
-            playAmbienceSong(message, args, randomSound.link);
-            break;
-
-        case 'playlist':
-            playPlaylist(message, args)
-            break;
-
-        case 'resume':
-            let chosenSong2 = bot.player.resume(message);
-            if (chosenSong2) {
-                message.channel.send(`⏯ **${getProperSoundContent(chosenSong2)}** was resumed!`);
-            }
-            break;
-
-        case 'skip':
-            let chosenSong3 = bot.player.skip(message);
-            if (chosenSong3) {
-                message.channel.send(`👉 **${getProperSoundContent(chosenSong3)}** was skipped!`);
-            }
-            break;
-
-        case 'stop':
-            let isComplete = bot.player.stop(message);
-            if (isComplete) {
-                message.channel.send('🛑 Sounds stopped, the Queue has been cleared');
-            }
-            break;
-
-        case 'loop':
-            let toggle = bot.player.toggleLoop(message);
-            if (toggle === null) return;
-            else if (toggle) message.channel.send(`🔁 ${getProperSoundContent(song)} is now on loop`)
-            else message.channel.send(`✋ **${getProperSoundContent(song)}** will no longer be on loop`)
-            break;
-
-        case 'progress':
-            let progressBar = bot.player.createProgressBar(message, {
-                size: 40,
-                block: '\u2588',
-                arrow: '\u2591'
-            });
-            if (progressBar)
-                message.channel.send(progressBar);
-            break;
-
-        case 'repeatqueue':
-            let status = bot.player.setQueueRepeatMode(message, true);
-            if (status === null)
-                break;
-            message.channel.send(`🔁 Queue will be repeated!`);
-            break;
-
-
-        case 'disablerepeatqueue':
-            let result = bot.player.setQueueRepeatMode(message, false);
-            if (result === null)
-                break;
-            message.channel.send(`✋ Queue will not be longer repeated!`);
-            break;
-
-        case 'remove':
-            let songID = parseInt(args[0]) - 1;
-
-            let chosenSong4 = bot.player.remove(message, songID);
-            if (chosenSong4)
-                message.channel.send(`🗑 Removed song **${getProperSoundContent(chosenSong4)}** (${args[0]}) from the Queue!`);
-            break;
-
-        case 'shuffle':
-            let songs = bot.player.shuffle(message);
-            if (songs)
-                message.channel.send('🔀 Server Queue was shuffled.');
-            break;
-
-
-        case 'queue':
-            let queue = bot.player.getQueue(message);
-            if (queue)
-                message.channel.send(getQueueEmbed(queue.songs));
-            break;
-
-        case 'resume':
-            let chosenSong5 = client.player.resume(message);
-            if (chosenSong5) {
-                message.channel.send(`⏯ **${getProperSoundContent(chosenSong5.name)}** was resumed!`);
-            }
-            break;
-
-        case 'play':
-            let content = refineContent(message.content);
-            // check all songs - compile early
-            if (matchSongByName(content)) {
-                playAmbienceSong(message, args, matchSongByName(content));
-                return;
-            }
-
-            if (matchSongByCategoryIndex(content)) {
-                console.log(message.content)
-                playAmbienceSong(message, args, matchSongByCategoryIndex(content));
-                return;
-            }
-            // check categories - compile early
-            if (matchCategoryByName(content)) {
-                message.channel.send(listCategorySongs(content));
-                return;
-            }
-            message.channel.send("Sound not found for **" + content + "**. \n Type `" + getCommandWithPrefix('commands') + "` to see all available sounds");
-            break;
-    }
-});
-
-
-
-// Helper Functions
-
-async function playCommand(message, args) {
-    console.log("top", message.content)
-    if (bot.player.isPlaying(message)) {
-        console.log("resume", modifyMessageForMusic(message).c);
-        let song = await bot.player.addToQueue(modifyMessageForMusic(message), args.join(' '));
-        // If there were no errors the Player#songAdd event will fire and the song will not be null.
-        if (song)
-            console.log(`Added ${song.name} to the queue`);
-        return;
-    } else {
-        message.channel.send(listLoadingMessage());
-        console.log("resume", modifyMessageForMusic(message));
-        let song = await bot.player.play(modifyMessageForMusic(message), args.join(' '));
-        // If there were no errors the Player#songAdd event will fire and the song will not be null.
-        if (song)
-            console.log(`Started playing ${song.name}`);
-        return;
-    }
-}
-
-async function playAmbienceSong(message, args, musicLink) {
-    try {
-        if (bot.player.isPlaying(message)) {
-            await bot.player.addToQueue(message, {search: musicLink, requestedBy: musicLink});
-        } else {
-            message.channel.send(listLoadingMessage());
-            await bot.player.play(message, {
-                search: musicLink,
-                requestedBy: musicLink
-            })
-        }
-    } catch (err) {
-        console.log("caught the error");
-        message.channel.send("❌ You must be in a voice channel to use this command.");
-    }
-}
-
-function shuffleArray(array) {
-    let newArray = array;
-    for (let i = newArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-}
-
-async function playPlaylist(message, args) {
-    let shuffledPlaylist = shuffleArray(playlistTracks);
-    console.log("dashdsa", shuffledPlaylist)
-    // console.log("adshdsajk", shuffledPlaylist[0])
-    // message.content = `!play `
-    // await playCommand(message, args)
-    for (let i = 0; i < shuffledPlaylist.length; i++) {
-        await playCustomSong(message, shuffledPlaylist[i], "play");
-    }
-
-}
-
-async function playCustomSong(message, songValue, isPlaylist) {
-    try {
-        message.content = `!play ${songValue}`;
-        let args = message.content.slice(configPrefix.length).trim().split(/ +/g);
-        if (bot.player.isPlaying(message)) {
-            let song = await bot.player.play(message, args.join(' '));
-            console.log("is", isPlaylist)
-
-            if (song && (isPlaylist !== "play")) {
-                console.log(`Added ${song.name} to the queue`);
-            }
-
-            return;
-        } else {
-            message.channel.send(listLoadingMessage());
-            let song = await bot.player.play(message, args.join(' '));
-
-            // If there were no errors the Player#songAdd event will fire and the song will not be null.
-            if (song)
-                console.log(`Started playing ${song.name}`);
-            return;
-        }
-    } catch (err) {
-        console.log("caught tne erroe");
-        message.channel.send("❌ You must be in a voice channel to use this command.");
-    }
-
-}
-
-export function refineContent(input) {
-    let content = input.split(" ")[1];
-    let contentArray = input.split(" ");
-    let refinedContent = contentArray.slice(1, contentArray.length);
-    content = refinedContent.join(" ");
-    return content;
-}
-
-export function getProperSoundContent(song) {
-    let selectedSong = getSongFromURL(song.requestedBy);
-    if (selectedSong) {
-        return selectedSong.name;
-    }
-    return song.name;
-}
-
-*/

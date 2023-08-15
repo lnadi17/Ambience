@@ -1,8 +1,10 @@
 import {CommandCategory} from "./CommandCategory";
+import {SlashCommandBuilder} from "discord.js";
 
 export interface Command {
-    name: string;
-    description: string;
+    type: CommandType
+    data: SlashCommandBuilder,
     category: CommandCategory;
     usage: string;
+    execute: (interaction: any, ...args: any) => Promise<void>;
 }

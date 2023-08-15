@@ -2,7 +2,7 @@ import * as Discord from 'discord.js';
 
 // import { matchCategoryByName } from "./matchCommands";
 import songsData from '../data/songs';
-import commands from "../data/commands";
+import {AmbienceClient} from "../types/AmbienceClient";
 
 export function getKeyWord(keyword, command: string) {
     let prefixKeyword = '/' + keyword;
@@ -56,9 +56,9 @@ export function getSongFromURL(songLink){
 
  */
 
-export function getCommandsForCategory(category: any){
+export function getCommandsForCategory(category: any, bot: AmbienceClient){
     let selectedCommands: any = [];
-    commands.forEach((command) => {
+    bot.commands.forEach((command) => {
         if(command.category == category) selectedCommands.push(command);
     })
     return selectedCommands;

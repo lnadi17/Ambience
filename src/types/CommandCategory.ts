@@ -1,6 +1,6 @@
 export enum CommandCategory {
-    settings = 'settings',
-    music = 'music',
-    queue = 'queue',
-    sound = 'sound'
+    Settings = 'Settings',
+    Music = 'Music',
+    Queue = 'Queue',
+    Sound = 'Sound'
 }
