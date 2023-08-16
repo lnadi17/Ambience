@@ -1,7 +1,7 @@
 import {CommandCategory} from "../types/CommandCategory";
 import {APIApplicationCommandOptionChoice, SlashCommandBuilder} from "discord.js";
 import {listCategories, listCategorySongs} from "../scripts/getEmbeds";
-import categories from "../data/songs";
+import categories from "../data/categories";
 
 export default {
     usage: "/categories",

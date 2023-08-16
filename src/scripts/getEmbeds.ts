@@ -1,11 +1,11 @@
 import {getCommandWithPrefix} from "./getCommands";
 import * as Discord from "discord.js";
 import {Command} from "../types/Command";
-import categories from "../data/songs";
+import categories from "../data/categories";
 import {AmbienceClient} from "../types/AmbienceClient";
 
 // const categories = songsData.categories;
-// const songs = getSongsFromData(categories);
+// const sounds = getSongsFromData(categories);
 
 export function getInviteEmbed() {
     return new Discord.EmbedBuilder()

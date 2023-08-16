@@ -1,11 +1,11 @@
 import { getSongsFromData} from "./getCommands";
-import categories from "../data/songs";
+import categories from "../data/categories";
 
 const songs = getSongsFromData(categories);
 
 // export function matchSongByName(title: any) {
 //     let purifiedTitle = getPurifiedInput(title);
-//     for (let song of songs) {
+//     for (let song of sounds) {
 //         let purifiedSongName = getPurifiedInput(song.name);
 //         if (purifiedSongName == purifiedTitle) {
 //             return song.link;

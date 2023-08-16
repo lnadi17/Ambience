@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js';
 
 // import { matchCategoryByName } from "./matchCommands";
-import songsData from '../data/songs';
+import songsData from '../data/categories';
 import {AmbienceClient} from "../types/AmbienceClient";
 
 export function getKeyWord(keyword, command: string) {
@@ -15,14 +15,14 @@ export function getCommandWithPrefix(command: string){
 }
 
 /*
-export function getQueueEmbed(songs){
-    let text = `**Now Playing:** ${songs[0].name} \n`;
-    if(songs.length > 1){
-        for(let i = 1; i < songs.length; i++){
-            if(getSongFromURL(songs[i].requestedBy).name){
-                text = text.concat(`\n **#${i}** - ${getSongFromURL(songs[i].requestedBy).name}`)
+export function getQueueEmbed(sounds){
+    let text = `**Now Playing:** ${sounds[0].name} \n`;
+    if(sounds.length > 1){
+        for(let i = 1; i < sounds.length; i++){
+            if(getSongFromURL(sounds[i].requestedBy).name){
+                text = text.concat(`\n **#${i}** - ${getSongFromURL(sounds[i].requestedBy).name}`)
             }else{
-                text = text.concat(`\n **#${i}** - ${songs[i].url}`)
+                text = text.concat(`\n **#${i}** - ${sounds[i].url}`)
             }
            
         }
@@ -46,7 +46,7 @@ export function getSongsFromData(data: any) {
 
 /*
 export function getSongFromURL(songLink){
-    for(let song of songs){
+    for(let song of sounds){
         if(song.link == songLink){
             return song;
         }
@@ -89,7 +89,7 @@ export function getPurifiedInput(input) {
 
 export function getSongsForCategory(categoryInput) {
     let matchedCategory = matchCategoryByName(categoryInput);
-    return matchedCategory.songs;
+    return matchedCategory.sounds;
 }
 
 export function getAllSounds(){
