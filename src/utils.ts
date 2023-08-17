@@ -5,6 +5,7 @@ import path, {join} from "path";
 import fs from "fs";
 import {Command} from "./types/Command";
 import {Song} from "./types/Song";
+import {CommandCategory} from "./types/CommandCategory";
 
 export function getRandomSound() : Song {
     const songs = categories.map(category => category.songs).flat();
@@ -13,6 +14,12 @@ export function getRandomSound() : Song {
 
 export function getSoundsList() : Song[] {
     return categories.map(category => category.songs).flat();
+}
+
+export async function getCommandsForCategory(category: CommandCategory) {
+    return getAllCommands().then((commands) => {
+        return commands.filter((command) => command.category === category);
+    });
 }
 
 export async function connectToChannel(channel: VoiceBasedChannel) {

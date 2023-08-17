@@ -2,9 +2,10 @@ import {CommandCategory} from "../types/CommandCategory";
 import {AutocompleteInteraction, SlashCommandBuilder} from "discord.js";
 import {connectToChannel, getSoundsList} from "../utils";
 import {AmbienceClient} from "../types/AmbienceClient";
+import {getPlayEmbed, getPlayErrorEmbed, getWarningEmbed} from "../scripts/getEmbeds";
 
 export default {
-    usage: "/play [sound]",
+    usage: "`/play [sound]`",
     data: new SlashCommandBuilder().setName("play").setDescription("Plays specified sound")
         .addStringOption(option =>
             option
@@ -12,29 +13,21 @@ export default {
                 .setDescription("The sound title to play")
                 .setRequired(true)
                 .setAutocomplete(true)
-                // .addChoices(
-                //     ...getSoundsList().map(sound => {
-                //         return {name: sound.title, value: sound.title}
-                //     })
-                // )
         ),
     category: CommandCategory.Sound,
     execute: async (interaction, bot: AmbienceClient) => {
         const member = await interaction.guild?.members.fetch(interaction.user);
         const soundName = interaction.options.getString('sound');
         if (member?.voice.channel) {
-            await interaction.reply({content: `Playing ${soundName}`, ephemeral: true});
+            await interaction.reply({embeds: [getPlayEmbed(soundName)]});
             try {
                 const connection = await connectToChannel(member.voice.channel);
                 await bot.playerManager.attachSubscriberToPlayer(connection, soundName);
             } catch {
-                await interaction.editReply({content: "There was an error while playing the sound.", ephemeral: true})
+                await interaction.editReply({embeds: [getPlayErrorEmbed(soundName)]})
             }
         } else {
-            await interaction.reply({
-                content: "You need to be in a voice channel to use this command.",
-                ephemeral: true
-            });
+            await interaction.reply({embeds: [getWarningEmbed("Ambience Radio", "You need to be in the voice channel to use this command")], ephemeral: true});
         }
     },
     autocomplete: async (interaction: AutocompleteInteraction<any>) => {

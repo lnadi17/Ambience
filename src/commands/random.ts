@@ -4,7 +4,7 @@ import {connectToChannel, getRandomSound} from "../utils";
 import {AmbienceClient} from "../types/AmbienceClient";
 
 export default {
-    usage: "/random",
+    usage: "`/random`",
     data: new SlashCommandBuilder().setName("random").setDescription("Plays a random sound"),
     category: CommandCategory.Sound,
     execute: async (interaction, bot: AmbienceClient) => {

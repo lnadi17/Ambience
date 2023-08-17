@@ -1,10 +1,10 @@
 import {CommandCategory} from "../types/CommandCategory";
 import {SlashCommandBuilder} from "discord.js";
-import {listCategories, listCategorySongs} from "../scripts/getEmbeds";
+import {getCategoriesEmbed, getCategorySoundsEmbed} from "../scripts/getEmbeds";
 import categories from "../data/categories";
 
 export default {
-    usage: "/categories",
+    usage: "`/categories` or `/categories [category_name]`",
     data: new SlashCommandBuilder().setName("categories").setDescription("Lists all sound categories")
         .addStringOption(option =>
             option.setName("category")
@@ -18,13 +18,13 @@ export default {
                         }
                     })
                 )),
-    category: CommandCategory.Settings,
+    category: CommandCategory.Info,
     execute: async (interaction) => {
         const categoryName = interaction.options.getString('category');
         if (categoryName) {
-            await interaction.reply({embeds: [listCategorySongs(categoryName)], ephemeral: true})
+            await interaction.reply({embeds: [getCategorySoundsEmbed(categoryName)], ephemeral: true})
         } else {
-            await interaction.reply({embeds: [listCategories()], ephemeral: true});
+            await interaction.reply({embeds: [getCategoriesEmbed()], ephemeral: true});
         }
     }
 }

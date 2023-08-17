@@ -1,6 +1,6 @@
 import {CommandCategory} from "../types/CommandCategory";
 import {SlashCommandBuilder} from "discord.js";
-import {getCommandInfo, getHelpEmbed} from "../scripts/getEmbeds";
+import {getCommandInfoEmbed, getHelpEmbed} from "../scripts/getEmbeds";
 import {AmbienceClient} from "../types/AmbienceClient";
 import {CommandName} from "../types/CommandName";
 
@@ -15,14 +15,15 @@ export default {
                     ...Object.values(CommandName).map((commandName) => {
                         return {name: commandName, value: commandName}
                     }))),
-    category: CommandCategory.Settings,
+    category: CommandCategory.Info,
     execute: async (interaction, bot: AmbienceClient) => {
         const commandName = interaction.options.getString("command");
         const command = bot.commands.get(commandName);
         if (command) {
-            await interaction.reply({embeds: [getCommandInfo(command)], ephemeral: true});
+            await interaction.reply({embeds: [getCommandInfoEmbed(command)], ephemeral: true});
         } else {
-            await interaction.reply({embeds: [getHelpEmbed(bot)], ephemeral: true});
+            const helpEmbed = await getHelpEmbed();
+            await interaction.reply({embeds: [helpEmbed], ephemeral: true});
         }
     }
 }
