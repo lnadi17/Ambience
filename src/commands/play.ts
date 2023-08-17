@@ -6,7 +6,7 @@ import {getPlayEmbed, getPlayErrorEmbed, getWarningEmbed} from "../scripts/getEm
 
 export default {
     usage: "`/play [sound]`",
-    data: new SlashCommandBuilder().setName("play").setDescription("Plays specified sound")
+    data: new SlashCommandBuilder().setName("play").setDescription("Plays a specified sound")
         .addStringOption(option =>
             option
                 .setName("sound")

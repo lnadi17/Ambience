@@ -6,7 +6,7 @@ import {CommandName} from "../types/CommandName";
 
 export default {
     usage: "`/help` or `/help [command]`",
-    data: new SlashCommandBuilder().setName("help").setDescription("List commands or give information about a command")
+    data: new SlashCommandBuilder().setName("help").setDescription("Gives information about bot commands")
         .addStringOption(option =>
             option.setName("command")
                 .setDescription("The command to get information about")

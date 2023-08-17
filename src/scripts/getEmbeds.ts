@@ -34,10 +34,10 @@ export async function getHelpEmbed() {
         '🌌 New to Ambience? [Join our community](https://discord.gg/w3Tp9x88Nw) \n\n';
     let musicText = "";
     let musicCommands = await getCommandsForCategory(CommandCategory.Sound);
-    musicCommands.forEach((command) => musicText = musicText.concat(` **${command.data.name}** \n Usage: ${command.usage} \n\n`));
+    musicCommands.forEach((command) => musicText = musicText.concat(` Command: **${command.data.name}** \n Description: **${command.data.description}** \n Usage: ${command.usage} \n\n`));
     let informationText = "";
     let settingsCommands = await getCommandsForCategory(CommandCategory.Info);
-    settingsCommands.forEach((command) => informationText = informationText.concat(` **${command.data.name}** \n Usage: ${command.usage} \n\n`));
+    settingsCommands.forEach((command) => informationText = informationText.concat(` **${command.data.name}** \n Description: **${command.data.description}** \n Usage: ${command.usage} \n\n`));
 
     return new EmbedBuilder()
         .setColor('#0099ff')
