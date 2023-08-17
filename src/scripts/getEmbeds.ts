@@ -98,14 +98,17 @@ export function getInvalidCommandEmbed(command) {
 }
 
 export function getAllSoundsEmbed() {
-    const sounds = categories.map((category) => category.songs).flat();
     let text = ""
 
-    for (let i = 0; i < sounds.length; i++) {
-        if (sounds[i]) {
-            text = text.concat(`\`${i + 1})\` ${sounds[i].title} \n`);
+    categories.forEach((category) => {
+        const sounds = category.songs;
+        text = text.concat(`\n ${category.emoji} **${category.name}** \n`);
+        for (let i = 0; i < sounds.length; i++) {
+            if (sounds[i]) {
+                text = text.concat(`\`${i + 1})\` ${sounds[i].title} \n`);
+            }
         }
-    }
+    });
 
     return new EmbedBuilder()
         .setColor('#0099ff')
