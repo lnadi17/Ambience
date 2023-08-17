@@ -4,9 +4,8 @@ import {
     AudioPlayerStatus,
     createAudioResource, entersState,
     NoSubscriberBehavior,
-    PlayerSubscription,
     StreamType,
-    VoiceConnection, VoiceConnectionStatus
+    VoiceConnection
 } from "@discordjs/voice";
 import {SongCategory} from "./SongCategory";
 import {Song} from "./Song";
@@ -57,7 +56,7 @@ export class AmbiencePlayerManager {
             }
         });
 
-        player.on("subscribe", (subscription: PlayerSubscription) => {
+        player.on("subscribe", () => {
             // We have a subscriber. Next statement will be true when first subscriber joins.
             if (player.state.status === AudioPlayerStatus.Idle) {
                 player.play(this.createResource(category, song));
