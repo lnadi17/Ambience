@@ -3,7 +3,7 @@ import {getVoiceConnection} from '@discordjs/voice';
 import {ActivityType, ChannelType} from 'discord-api-types/v10';
 import {getInviteEmbed} from './scripts/getEmbeds';
 import {AmbienceClient} from "./types/AmbienceClient";
-import {attachRecorder, getAllCommands} from "./utils";
+import {getAllCommands} from "./utils";
 
 require('dotenv').config();
 
@@ -18,7 +18,7 @@ getAllCommands().then((commands) => {
 }).catch(error => console.log("Error while loading commands:", error));
 
 // Disconnect the voice connection if no one is in the channel
-bot.on(Events.VoiceStateUpdate, (oldState, newState) => {
+bot.on(Events.VoiceStateUpdate, (oldState) => {
     if (oldState.channel?.members.size === 1) {
         getVoiceConnection(oldState.guild.id)?.destroy();
     }

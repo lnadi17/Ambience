@@ -1,8 +1,15 @@
 import {VoiceBasedChannel} from "discord.js";
-import {AudioPlayer, createAudioResource, entersState, joinVoiceChannel, VoiceConnectionStatus} from "@discordjs/voice";
+import {entersState, joinVoiceChannel, VoiceConnectionStatus} from "@discordjs/voice";
+import categories from "./data/categories";
 import path, {join} from "path";
 import fs from "fs";
 import {Command} from "./types/Command";
+import {Song} from "./types/Song";
+
+export function getRandomSound() : Song {
+    const songs = categories.map(category => category.songs).flat();
+    return songs[Math.floor(Math.random() * songs.length)];
+}
 
 export async function connectToChannel(channel: VoiceBasedChannel) {
     const connection = joinVoiceChannel({
@@ -12,7 +19,7 @@ export async function connectToChannel(channel: VoiceBasedChannel) {
     })
 
     // Attach disconnection handler
-    connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+    connection.on(VoiceConnectionStatus.Disconnected, async () => {
         try {
             await Promise.race([
                 entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
@@ -32,12 +39,6 @@ export async function connectToChannel(channel: VoiceBasedChannel) {
         connection.destroy();
         throw error;
     }
-}
-
-export function attachRecorder(player: AudioPlayer) {
-    // TODO: Use ogg or webm format for better performance
-    player.play(createAudioResource(join(__dirname, 'data/2min30sec.mp3')));
-    console.log("Recorder attached!")
 }
 
 export async function getAllCommands() : Promise<Command[]> {
