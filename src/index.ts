@@ -1,5 +1,5 @@
 import {Events, GatewayIntentBits, PermissionsBitField, TextChannel} from 'discord.js';
-import {getVoiceConnection, NoSubscriberBehavior} from '@discordjs/voice';
+import {getVoiceConnection} from '@discordjs/voice';
 import {ActivityType, ChannelType} from 'discord-api-types/v10';
 import {getInviteEmbed} from './scripts/getEmbeds';
 import {AmbienceClient} from "./types/AmbienceClient";
@@ -17,14 +17,14 @@ getAllCommands().then((commands) => {
     })
 }).catch(error => console.log("Error while loading commands:", error));
 
+// Disconnect the voice connection if no one is in the channel
 bot.on(Events.VoiceStateUpdate, (oldState, newState) => {
-    // Disconnect from voice channel if no one is in it
     if (oldState.channel?.members.size === 1) {
-        const connection = getVoiceConnection(oldState.guild.id);
-        connection?.destroy()
+        getVoiceConnection(oldState.guild.id)?.destroy();
     }
 });
 
+// Handle slash command interactions
 bot.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
@@ -102,6 +102,7 @@ bot.on(Events.GuildCreate, guild => {
     }) as TextChannel;
 
     if (channel) {
+        // noinspection JSIgnoredPromiseFromCall
         channel.send({embeds: [getInviteEmbed()]});
     }
 });
@@ -109,17 +110,20 @@ bot.on(Events.GuildCreate, guild => {
 // Log when the bot is ready
 bot.on(Events.ClientReady, () => {
     console.log("🎶 I am ready to Play 🎶");
-    attachRecorder(bot.player);
-
-    bot.user!.setStatus('online')
-    bot.user!.setPresence({
-        activities: [
-            {
-                name: 'your mom',
-                type: ActivityType.Watching
-            }
-        ]
-    });
+    if (bot.user) {
+        bot.user.setStatus('online')
+        bot.user.setPresence({
+            activities: [
+                {
+                    name: 'your mom',
+                    type: ActivityType.Watching
+                }
+            ]
+        });
+    } else {
+        throw Error("Bot user is undefined");
+    }
 });
 
+// noinspection JSIgnoredPromiseFromCall
 bot.login(configToken);
