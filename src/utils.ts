@@ -11,6 +11,10 @@ export function getRandomSound() : Song {
     return songs[Math.floor(Math.random() * songs.length)];
 }
 
+export function getSoundsList() : Song[] {
+    return categories.map(category => category.songs).flat();
+}
+
 export async function connectToChannel(channel: VoiceBasedChannel) {
     const connection = joinVoiceChannel({
         channelId: channel.id,

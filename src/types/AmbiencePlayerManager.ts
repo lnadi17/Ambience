@@ -32,7 +32,7 @@ export class AmbiencePlayerManager {
         });
 
         const cleanupPlayer = () => {
-            console.log("Removing all listeners");
+            console.log(`Removing all listeners from ${song.title}...`);
             player.stop();
             player.removeAllListeners();
             AmbiencePlayerManager.players.delete(song.title);
@@ -46,7 +46,7 @@ export class AmbiencePlayerManager {
 
         player.on(AudioPlayerStatus.AutoPaused, async () => {
             try {
-                console.log("AutoPaused. Started waiting for subscribers...")
+                console.log(`${song.title} AutoPaused. Started waiting for subscribers...`)
                 await Promise.race([
                     entersState(player, AudioPlayerStatus.Playing, 30_000),
                     entersState(player, AudioPlayerStatus.Buffering, 30_000),
@@ -74,7 +74,7 @@ export class AmbiencePlayerManager {
 
         return player;
     }
-
+    
     private static listAllPlayers() {
         this.players.forEach((player, key) => {
             console.log(`${key}: ${player.state.status}`)
