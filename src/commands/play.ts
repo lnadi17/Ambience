@@ -5,11 +5,11 @@ import {AmbienceClient} from "../types/AmbienceClient";
 
 export default {
     usage: "/play [sound]",
-    data: new SlashCommandBuilder().setName("play").setDescription("Plays specified sound.")
+    data: new SlashCommandBuilder().setName("play").setDescription("Plays specified sound")
         .addStringOption(option =>
             option
                 .setName("sound")
-                .setDescription("The sound to play.")
+                .setDescription("The sound title to play")
                 .setRequired(true)
                 .setAutocomplete(true)
                 // .addChoices(

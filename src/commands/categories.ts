@@ -1,14 +1,14 @@
 import {CommandCategory} from "../types/CommandCategory";
-import {APIApplicationCommandOptionChoice, SlashCommandBuilder} from "discord.js";
+import {SlashCommandBuilder} from "discord.js";
 import {listCategories, listCategorySongs} from "../scripts/getEmbeds";
 import categories from "../data/categories";
 
 export default {
     usage: "/categories",
-    data: new SlashCommandBuilder().setName("categories").setDescription("Lists all sound categories.")
+    data: new SlashCommandBuilder().setName("categories").setDescription("Lists all sound categories")
         .addStringOption(option =>
             option.setName("category")
-                .setDescription("The category to list sounds for.")
+                .setDescription("The specific category to list sounds for")
                 .setRequired(false)
                 .addChoices(
                     ...categories.map((category) => {

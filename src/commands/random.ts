@@ -5,7 +5,7 @@ import {AmbienceClient} from "../types/AmbienceClient";
 
 export default {
     usage: "/random",
-    data: new SlashCommandBuilder().setName("random").setDescription("Plays a random sound."),
+    data: new SlashCommandBuilder().setName("random").setDescription("Plays a random sound"),
     category: CommandCategory.Sound,
     execute: async (interaction, bot: AmbienceClient) => {
         const member = await interaction.guild?.members.fetch(interaction.user);

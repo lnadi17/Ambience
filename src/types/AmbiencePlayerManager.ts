@@ -74,7 +74,7 @@ export class AmbiencePlayerManager {
 
         return player;
     }
-    
+
     private static listAllPlayers() {
         this.players.forEach((player, key) => {
             console.log(`${key}: ${player.state.status}`)
