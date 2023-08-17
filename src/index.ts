@@ -1,7 +1,7 @@
 import {Events, GatewayIntentBits, PermissionsBitField, TextChannel} from 'discord.js';
 import {getVoiceConnection} from '@discordjs/voice';
 import {ActivityType, ChannelType} from 'discord-api-types/v10';
-import {getInviteEmbed} from './scripts/getEmbeds';
+import {getInvalidCommandEmbed, getInviteEmbed, getWarningEmbed} from './scripts/getEmbeds';
 import {AmbienceClient} from "./types/AmbienceClient";
 import {getAllCommands} from "./utils";
 
@@ -32,6 +32,7 @@ bot.on(Events.InteractionCreate, async interaction => {
 
     if (!command) {
         console.error(`No command matching ${interaction.commandName} was found.`);
+        await interaction.reply({embeds: [getInvalidCommandEmbed(interaction.commandName)], ephemeral: true});
         return;
     }
 
@@ -40,9 +41,9 @@ bot.on(Events.InteractionCreate, async interaction => {
     } catch (error) {
         console.error(error);
         if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({content: 'There was an error while executing this command!', ephemeral: true});
+            await interaction.followUp({embeds: [getWarningEmbed("Execution Error", "There was an error while executing this command")], ephemeral: true});
         } else {
-            await interaction.reply({content: 'There was an error while executing this command!', ephemeral: true});
+            await interaction.reply({embeds: [getWarningEmbed("Execution Error", "There was an error while executing this command")], ephemeral: true});
         }
     }
 

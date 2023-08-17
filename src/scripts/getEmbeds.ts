@@ -91,13 +91,10 @@ export function getCategoriesEmbed() {
 
 export function getInvalidCommandEmbed(command) {
     return new EmbedBuilder()
-        .setColor('#0099ff')
-        .setTitle('Invalid Command!')
+        .setColor('#f6c210')
+        .setTitle(`⚠️ Invalid Command ⚠️`)
         .setDescription(`/${command} is an invalid command`)
         .addFields([{name: `To see all commands, please type: `, value: ` \`\`\` /help \`\`\``}]);
-}
-
-export function listHelpSettings() {
 }
 
 export function getAllSoundsEmbed() {
