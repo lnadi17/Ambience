@@ -1,7 +1,8 @@
 import {CommandCategory} from "../types/CommandCategory";
-import {SlashCommandBuilder} from "discord.js";
+import {Message, SlashCommandBuilder} from "discord.js";
 import {connectToChannel, getRandomSound} from "../utils";
 import {AmbienceClient} from "../types/AmbienceClient";
+import {getPlayEmbed, getPlayErrorEmbed, getRandomEmbed, getWarningEmbed} from "../scripts/getEmbeds";
 
 export default {
     usage: "`/random`",
@@ -11,15 +12,24 @@ export default {
         const member = await interaction.guild?.members.fetch(interaction.user);
         const randomSoundTitle = getRandomSound().title;
         if (member?.voice.channel) {
-            await interaction.reply({content: `Playing ${randomSoundTitle}.`, ephemeral: true});
+            // Change color 5 times
+            await interaction.reply({embeds: [getRandomEmbed("Generating random sound...", true)], ephemeral: true});
+            await new Promise(resolve => setTimeout(resolve, 200));
+            for (let i = 0; i < 4; i++) {
+                await interaction.editReply({embeds: [getRandomEmbed("Generating random sound...", true)], ephemeral: true});
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+            await interaction.editReply({embeds: [getRandomEmbed(`Random sound is: **${randomSoundTitle}**`)], ephemeral: true});
+            const followUp: Message = await interaction.followUp({embeds: [getPlayEmbed(randomSoundTitle)]});
+
             try {
                 const connection = await connectToChannel(member.voice.channel);
                 await bot.playerManager.attachSubscriberToPlayer(connection, randomSoundTitle);
             } catch {
-                await interaction.editReply({content: "There was an error while playing the sound.", ephemeral: true})
+                await followUp.edit({embeds: [getPlayErrorEmbed(randomSoundTitle)]})
             }
         } else {
-            await interaction.reply({content: "You need to be in a voice channel to use this command.", ephemeral: true});
+            await interaction.reply({embeds: [getWarningEmbed("Ambience Radio", "You need to be in the voice channel to use this command")], ephemeral: true});
         }
     }
 }

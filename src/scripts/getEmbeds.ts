@@ -137,6 +137,13 @@ export function getPlayEmbed(sound: string) {
         .setDescription(text);
 }
 
+export function getRandomEmbed(text: string, randomColor: boolean = false) {
+    return new EmbedBuilder()
+        .setColor(randomColor ? "Random" : '#0099ff')
+        .setTitle('🎲 Ambience Radio 🎲')
+        .setDescription(text);
+}
+
 export function getPlayErrorEmbed(sound: string) {
     let text = `❌ **Error Playing:** ${sound} \n`;
 

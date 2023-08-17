@@ -7,12 +7,12 @@ import {Command} from "./types/Command";
 import {Song} from "./types/Song";
 import {CommandCategory} from "./types/CommandCategory";
 
-export function getRandomSound() : Song {
+export function getRandomSound(): Song {
     const songs = categories.map(category => category.songs).flat();
     return songs[Math.floor(Math.random() * songs.length)];
 }
 
-export function getSoundsList() : Song[] {
+export function getSoundsList(): Song[] {
     return categories.map(category => category.songs).flat();
 }
 
@@ -52,7 +52,7 @@ export async function connectToChannel(channel: VoiceBasedChannel) {
     }
 }
 
-export async function getAllCommands() : Promise<Command[]> {
+export async function getAllCommands(): Promise<Command[]> {
     const commandsPath = join(__dirname, 'commands');
     const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
     const commandPromises: Promise<any>[] = [];
