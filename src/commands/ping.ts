@@ -1,5 +1,6 @@
 import {CommandCategory} from "../types/CommandCategory";
 import {SlashCommandBuilder} from "discord.js";
+import {Command} from "../types/Command";
 
 
 export default {
@@ -9,4 +10,4 @@ export default {
     execute: async (interaction) => {
         await interaction.reply(`Pong!`);
     }
-}
+} as Command;

@@ -3,6 +3,7 @@ import {Message, SlashCommandBuilder} from "discord.js";
 import {connectToChannel, getRandomSound} from "../utils";
 import {AmbienceClient} from "../types/AmbienceClient";
 import {getPlayEmbed, getPlayErrorEmbed, getRandomEmbed, getWarningEmbed} from "../scripts/getEmbeds";
+import {Command} from "../types/Command";
 
 export default {
     usage: "`/random`",
@@ -16,10 +17,10 @@ export default {
             await interaction.reply({embeds: [getRandomEmbed("Generating random sound...", true)], ephemeral: true});
             await new Promise(resolve => setTimeout(resolve, 200));
             for (let i = 0; i < 4; i++) {
-                await interaction.editReply({embeds: [getRandomEmbed("Generating random sound...", true)], ephemeral: true});
+                await interaction.editReply({embeds: [getRandomEmbed("Generating random sound...", true)]});
                 await new Promise(resolve => setTimeout(resolve, 200));
             }
-            await interaction.editReply({embeds: [getRandomEmbed(`Random sound is: **${randomSoundTitle}**`)], ephemeral: true});
+            await interaction.editReply({embeds: [getRandomEmbed(`Random sound is: **${randomSoundTitle}**`)]});
             const followUp: Message = await interaction.followUp({embeds: [getPlayEmbed(randomSoundTitle)]});
 
             try {
@@ -32,4 +33,4 @@ export default {
             await interaction.reply({embeds: [getWarningEmbed("Ambience Radio", "You need to be in the voice channel to use this command")], ephemeral: true});
         }
     }
-}
+} as Command;

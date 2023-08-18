@@ -3,6 +3,7 @@ import {SlashCommandBuilder} from "discord.js";
 import {getCommandInfoEmbed, getHelpEmbed} from "../scripts/getEmbeds";
 import {AmbienceClient} from "../types/AmbienceClient";
 import {CommandName} from "../types/CommandName";
+import {Command} from "../types/Command";
 
 export default {
     usage: "`/help` or `/help [command]`",
@@ -18,7 +19,7 @@ export default {
     category: CommandCategory.Info,
     execute: async (interaction, bot: AmbienceClient) => {
         const commandName = interaction.options.getString("command");
-        const command = bot.commands.get(commandName);
+        const command = commandName ? bot.commands.get(commandName) : null;
         if (command) {
             await interaction.reply({embeds: [getCommandInfoEmbed(command)], ephemeral: true});
         } else {
@@ -26,4 +27,4 @@ export default {
             await interaction.reply({embeds: [helpEmbed], ephemeral: true});
         }
     }
-}
+} as Command;

@@ -38,9 +38,14 @@ export class AmbiencePlayerManager {
             AmbiencePlayerManager.players.delete(song.title);
         }
 
+        player.on("debug", (message) => {
+            console.log(message);
+        });
+
         player.on(AudioPlayerStatus.Idle, () => {
             // The audio player will be in this state when there is no audio resource for it to play
             // This is basically a replay feature
+            console.log(`${song.title} Idle. Started replay...`)
             player.play(this.createResource(category, song));
         });
 
@@ -67,10 +72,6 @@ export class AmbiencePlayerManager {
             console.log(`AudioPlayerError: ${error.message}`);
             cleanupPlayer();
         });
-
-        // player.on("debug", (message) => {
-        //     console.log(message);
-        // });
 
         return player;
     }
