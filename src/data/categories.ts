@@ -234,7 +234,7 @@ const categories: SongCategory[] = [
         ]
     },
     {
-        name: "Video Games",
+        name: "Games",
         emoji: "🎮",
         songs: [
             {

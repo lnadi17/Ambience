@@ -180,19 +180,16 @@ export function getStopEmbed() {
 }
 
 export function getPlayComponents() {
-    // Create rows of buttons with 5 buttons per row
     let rows: ActionRowBuilder<ButtonBuilder>[] = []
-    for (let i = 0; i < Math.floor(categories.length / 5) + 1; i++) {
-        const row = new ActionRowBuilder<ButtonBuilder>()
-        const components: ButtonBuilder[] = [];
-        for (let j = 0; j < 5; j++) {
-            if (i * 5 + j == categories.length) break;
-            console.log(i, j)
-            components.push(getCategoryButton(categories[i * 5 + j]));
+    let currentRow;
+    categories.forEach((category, index) => {
+        if (index % 3 === 0) {
+            if (currentRow) rows.push(currentRow);
+            currentRow = new ActionRowBuilder<ButtonBuilder>()
         }
-        row.addComponents(components);
-        rows.push(row);
-    }
+        currentRow.addComponents(getCategoryButton(category));
+    })
+    if (currentRow) rows.push(currentRow);
     return rows;
 }
 
