@@ -2,16 +2,17 @@ import {CommandCategory} from "../types/CommandCategory";
 import {AutocompleteInteraction, SlashCommandBuilder} from "discord.js";
 import {connectToChannel, getSoundsList} from "../utils";
 import {AmbienceClient} from "../types/AmbienceClient";
-import {getPlayEmbed, getPlayErrorEmbed, getWarningEmbed} from "../scripts/getEmbeds";
+import {getPlayComponents, getPlayEmbed, getPlayErrorEmbed, getWarningEmbed} from "../scripts/getEmbeds";
+import {Command} from "../types/Command";
 
 export default {
-    usage: "`/play [sound]`",
+    usage: "`/play` or `/play [sound]`",
     data: new SlashCommandBuilder().setName("play").setDescription("Plays a specified sound")
         .addStringOption(option =>
             option
                 .setName("sound")
                 .setDescription("The sound title to play")
-                .setRequired(true)
+                .setRequired(false)
                 .setAutocomplete(true)
         ),
     category: CommandCategory.Sound,
@@ -19,12 +20,17 @@ export default {
         const member = await interaction.guild?.members.fetch(interaction.user);
         const soundName = interaction.options.getString('sound');
         if (member?.voice.channel) {
-            await interaction.reply({embeds: [getPlayEmbed(soundName)]});
-            try {
-                const connection = await connectToChannel(member.voice.channel);
-                await bot.playerManager.attachSubscriberToPlayer(connection, soundName);
-            } catch {
-                await interaction.editReply({embeds: [getPlayErrorEmbed(soundName)]})
+            if (soundName) {
+                await interaction.reply({embeds: [getPlayEmbed(soundName)]});
+                try {
+                    const connection = await connectToChannel(member.voice.channel);
+                    await bot.playerManager.attachSubscriberToPlayer(connection, soundName);
+                } catch {
+                    await interaction.editReply({embeds: [getPlayErrorEmbed(soundName)]})
+                }
+            } else {
+                // Return interactive sound list
+                await interaction.reply({components: getPlayComponents()});
             }
         } else {
             await interaction.reply({embeds: [getWarningEmbed("Ambience Radio", "You need to be in the voice channel to use this command")], ephemeral: true});
@@ -45,5 +51,5 @@ export default {
         await interaction.respond(
             limited.map(choice => ({ name: choice, value: choice })),
         );
-    }
-}
+    },
+} as Command;

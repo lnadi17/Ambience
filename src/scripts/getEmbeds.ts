@@ -1,8 +1,15 @@
-import {EmbedBuilder} from "discord.js";
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    EmbedBuilder
+} from "discord.js";
 import {Command} from "../types/Command";
 import categories from "../data/categories";
 import {getCommandsForCategory} from "../utils";
 import {CommandCategory} from "../types/CommandCategory";
+import {SongCategory} from "../types/SongCategory";
+import {Song} from "../types/Song";
 
 export function getInviteEmbed() {
     return new EmbedBuilder()
@@ -172,6 +179,30 @@ export function getStopEmbed() {
         .setDescription(text);
 }
 
-export function getPlayActionRow() {
+export function getPlayComponents() {
+    // Create rows of buttons with 5 buttons per row
+    let rows: ActionRowBuilder<ButtonBuilder>[] = []
+    for (let i = 0; i < Math.floor(categories.length / 5) + 1; i++) {
+        const row = new ActionRowBuilder<ButtonBuilder>()
+        const components: ButtonBuilder[] = [];
+        for (let j = 0; j < 5; j++) {
+            if (i * 5 + j == categories.length) break;
+            console.log(i, j)
+            components.push(getCategoryButton(categories[i * 5 + j]));
+        }
+        row.addComponents(components);
+        rows.push(row);
+    }
+    return rows;
+}
+
+function getCategoryButton(category: SongCategory) {
+    return new ButtonBuilder()
+        .setLabel(`${category.emoji} ${category.name}`)
+        .setStyle(ButtonStyle.Primary)
+        .setCustomId(`category_${category.name}`)
+}
+
+function getSongButton(song: Song) {
 
 }
