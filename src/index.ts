@@ -2,8 +2,8 @@ import {Events, GatewayIntentBits, PermissionsBitField, TextChannel} from 'disco
 import {getVoiceConnection} from '@discordjs/voice';
 import {ActivityType, ChannelType} from 'discord-api-types/v10';
 import {getInvalidCommandEmbed, getInviteEmbed, getWarningEmbed} from './scripts/getEmbeds';
-import {AmbienceClient} from "./types/AmbienceClient";
-import {getAllCommands} from "./utils";
+import {AmbienceClient} from "./interfaces/AmbienceClient";
+import {getAllCommands, getRandomSound} from "./utils";
 
 require('dotenv').config();
 
@@ -46,53 +46,6 @@ bot.on(Events.InteractionCreate, async interaction => {
             await interaction.reply({embeds: [getWarningEmbed("Execution Error", "There was an error while executing this command")], ephemeral: true});
         }
     }
-
-    // switch (command) {
-    //     case 'pause':
-    //         let chosenSong = bot.player.pause(message);
-    //         if (chosenSong) {
-    //             message.channel.send(`⏸ **${getProperSoundContent(chosenSong)}** was paused!`);
-    //         }
-    //         break;
-    //
-    //     case 'random':
-    //         let randomSound = getRandomSound();
-    //         message.content = `!play ${randomSound.link}`
-    //         playAmbienceSong(message, args, randomSound.link);
-    //         break;
-
-    //     case 'resume':
-    //         let chosenSong2 = bot.player.resume(message);
-    //         if (chosenSong2) {
-    //             message.channel.send(`⏯ **${getProperSoundContent(chosenSong2)}** was resumed!`);
-    //         }
-    //         break;
-    //
-    //     case 'stop':
-    //         let isComplete = bot.player.stop(message);
-    //         if (isComplete) {
-    //             message.channel.send('🛑 Sounds stopped, the Queue has been cleared');
-    //         }
-    //         break;
-    //
-    //     case 'loop':
-    //         let toggle = bot.player.toggleLoop(message);
-    //         if (toggle === null) return;
-    //         else if (toggle) message.channel.send(`🔁 ${getProperSoundContent(song)} is now on loop`)
-    //         else message.channel.send(`✋ **${getProperSoundContent(song)}** will no longer be on loop`)
-    //         break;
-    //
-    //     case 'progress':
-    //         let progressBar = bot.player.createProgressBar(message, {
-    //             size: 40,
-    //             block: '\u2588',
-    //             arrow: '\u2591'
-    //         });
-    //         if (progressBar)
-    //             message.channel.send(progressBar);
-    //         break;
-    //
-    // }
 });
 
 // Handle play command autocomplete
@@ -134,8 +87,8 @@ bot.on(Events.ClientReady, () => {
         bot.user.setPresence({
             activities: [
                 {
-                    name: 'your mom',
-                    type: ActivityType.Watching
+                    name: getRandomSound().title,
+                    type: ActivityType.Listening
                 }
             ]
         });

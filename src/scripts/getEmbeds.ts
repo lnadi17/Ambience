@@ -1,15 +1,9 @@
-import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    EmbedBuilder
-} from "discord.js";
+import {EmbedBuilder} from "discord.js";
 import {Command} from "../types/Command";
 import categories from "../data/categories";
 import {getCommandsForCategory} from "../utils";
-import {CommandCategory} from "../types/CommandCategory";
+import {CommandCategory} from "../interfaces/CommandCategory";
 import {SongCategory} from "../types/SongCategory";
-import {Song} from "../types/Song";
 
 export function getInviteEmbed() {
     return new EmbedBuilder()
@@ -179,18 +173,11 @@ export function getStopEmbed() {
         .setDescription(text);
 }
 
-export function getPlayComponents() {
-    let rows: ActionRowBuilder<ButtonBuilder>[] = []
-    let currentRow;
-    categories.forEach((category, index) => {
-        if (index % 3 === 0) {
-            if (currentRow) rows.push(currentRow);
-            currentRow = new ActionRowBuilder<ButtonBuilder>()
-        }
-        currentRow.addComponents(getCategoryButton(category));
-    })
-    if (currentRow) rows.push(currentRow);
-    return rows;
+export function getPlaySoundEmbed(category: SongCategory) {
+    return new EmbedBuilder()
+        .setColor('#0099ff')
+        .setTitle('🎶 Ambience Radio 🎶')
+        .setDescription(`Please select a sound from ${category.name}`)
 }
 
 export function getPlayComponentsEmbed() {
@@ -200,16 +187,3 @@ export function getPlayComponentsEmbed() {
         .setDescription("Please select a category")
 }
 
-function getCategoryButton(category: SongCategory) {
-    return new ButtonBuilder()
-        .setLabel(`${category.emoji} ${category.name}`)
-        .setStyle(ButtonStyle.Primary)
-        .setCustomId(`category_${category.name}`)
-}
-
-function getSongButton(song: Song) {
-    return new ButtonBuilder()
-        .setLabel(`${song.title}`)
-        .setStyle(ButtonStyle.Primary)
-        .setCustomId(`song_${song.title}`)
-}

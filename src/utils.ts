@@ -5,7 +5,8 @@ import path, {join} from "path";
 import fs from "fs";
 import {Command} from "./types/Command";
 import {Song} from "./types/Song";
-import {CommandCategory} from "./types/CommandCategory";
+import {CommandCategory} from "./interfaces/CommandCategory";
+import {SongCategory} from "./types/SongCategory";
 
 export function getRandomSound(): Song {
     const songs = categories.map(category => category.songs).flat();
@@ -63,4 +64,14 @@ export async function getAllCommands(): Promise<Command[]> {
     return Promise.all(commandPromises).then((commands) => {
         return commands.map((command) => command.default);
     });
+}
+
+export function matchCategoryButton(customId: string) : SongCategory | undefined {
+    const categoryString = customId.split('_')[1];
+    return categories.find(item => item.name.toLowerCase() === categoryString.toLowerCase());
+}
+
+export function matchSongButton(customId: string) : Song | undefined {
+    const songString = customId.split('_')[1];
+    return getSoundsList().find(item => item.title.toLowerCase() === songString.toLowerCase());
 }

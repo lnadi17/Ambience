@@ -1,9 +1,9 @@
-import {CommandCategory} from "../types/CommandCategory";
 import {SlashCommandBuilder} from "discord.js";
 import {getCommandInfoEmbed, getHelpEmbed} from "../scripts/getEmbeds";
-import {AmbienceClient} from "../types/AmbienceClient";
-import {CommandName} from "../types/CommandName";
 import {Command} from "../types/Command";
+import {CommandName} from "../interfaces/CommandName";
+import {CommandCategory} from "../interfaces/CommandCategory";
+import {AmbienceClient} from "../interfaces/AmbienceClient";
 
 export default {
     usage: "`/help` or `/help [command]`",

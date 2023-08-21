@@ -1,15 +1,20 @@
-import {CommandCategory} from "../types/CommandCategory";
-import {AutocompleteInteraction, SlashCommandBuilder} from "discord.js";
-import {connectToChannel, getSoundsList} from "../utils";
-import {AmbienceClient} from "../types/AmbienceClient";
 import {
-    getPlayComponents,
+    AutocompleteInteraction,
+    ChatInputCommandInteraction,
+    GuildMember,
+    SlashCommandBuilder, VoiceBasedChannel
+} from "discord.js";
+import {connectToChannel, getSoundsList, matchCategoryButton, matchSongButton} from "../utils";
+import {
     getPlayComponentsEmbed,
     getPlayEmbed,
-    getPlayErrorEmbed,
+    getPlayErrorEmbed, getPlaySoundEmbed,
     getWarningEmbed
 } from "../scripts/getEmbeds";
 import {Command} from "../types/Command";
+import {getPlayComponents, getPlaySoundComponents} from "../scripts/getComponents";
+import {CommandCategory} from "../interfaces/CommandCategory";
+import {AmbienceClient} from "../interfaces/AmbienceClient";
 
 export default {
     usage: "`/play` or `/play [sound]`",
@@ -23,20 +28,13 @@ export default {
         ),
     category: CommandCategory.Sound,
     execute: async (interaction, bot: AmbienceClient) => {
-        const member = await interaction.guild?.members.fetch(interaction.user);
+        const member: GuildMember = await interaction.guild?.members.fetch(interaction.user);
         const soundName = interaction.options.getString('sound');
         if (member?.voice.channel) {
             if (soundName) {
-                await interaction.reply({embeds: [getPlayEmbed(soundName)]});
-                try {
-                    const connection = await connectToChannel(member.voice.channel);
-                    await bot.playerManager.attachSubscriberToPlayer(connection, soundName);
-                } catch {
-                    await interaction.editReply({embeds: [getPlayErrorEmbed(soundName)]})
-                }
+                await playSpecificSound(interaction, soundName, member.voice.channel, bot);
             } else {
-                // Return interactive sound list
-                await interaction.reply({embeds: [getPlayComponentsEmbed()], components: getPlayComponents()});
+                await playInteraction(interaction, member.voice.channel, bot);
             }
         } else {
             await interaction.reply({
@@ -62,3 +60,66 @@ export default {
         );
     },
 } as Command;
+
+async function playSpecificSound(interaction: ChatInputCommandInteraction<any>, soundName: string, channel: VoiceBasedChannel, bot: AmbienceClient) {
+    await interaction.reply({embeds: [getPlayEmbed(soundName)]});
+    try {
+        const connection = await connectToChannel(channel);
+        await bot.playerManager.attachSubscriberToPlayer(connection, soundName);
+    } catch {
+        await interaction.editReply({embeds: [getPlayErrorEmbed(soundName)]})
+    }
+}
+
+async function playInteraction(interaction: ChatInputCommandInteraction<any>, channel: VoiceBasedChannel, bot: AmbienceClient) {
+    // Return interactive sound list
+    const response = await interaction.reply({
+        embeds: [getPlayComponentsEmbed()],
+        components: getPlayComponents()
+    });
+    const collectorFilter = i => i.user.id === interaction.user.id;
+    try {
+        // Choose category
+        const confirmation = await response.awaitMessageComponent({filter: collectorFilter, time: 60000});
+        const songCategory = matchCategoryButton(confirmation.customId);
+        if (!songCategory) {
+            await confirmation.update({
+                embeds: [getWarningEmbed("Ambience Radio", "Could not find such category")],
+                components: getPlayComponents(false)
+            });
+            return;
+        }
+
+        // Choose song
+        await confirmation.update({
+            embeds: [getPlaySoundEmbed(songCategory)],
+            components: getPlaySoundComponents(songCategory)
+        })
+        const songConfirmation = await response.awaitMessageComponent({filter: collectorFilter, time: 60000});
+        const song = matchSongButton(songConfirmation.customId);
+        if (!song) {
+            await confirmation.update({
+                embeds: [getWarningEmbed("Ambience Radio", "Could not find such sound")],
+                components: getPlaySoundComponents(songCategory, false)
+            });
+            return;
+        }
+
+        // Play song
+        await songConfirmation.update({
+            components: getPlaySoundComponents(songCategory, false)
+        })
+        const followUp = await interaction.followUp({embeds: [getPlayEmbed(song.title)]});
+        try {
+            const connection = await connectToChannel(channel);
+            await bot.playerManager.attachSubscriberToPlayer(connection, song.title);
+        } catch {
+            await followUp.edit({embeds: [getPlayErrorEmbed(song.title)]})
+        }
+    } catch (e) {
+        await interaction.editReply({
+            embeds: [getWarningEmbed("Ambience Radio", "Confirmation not received within 1 minute")],
+            components: getPlayComponents(false)
+        });
+    }
+}

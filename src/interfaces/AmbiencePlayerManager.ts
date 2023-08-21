@@ -7,11 +7,11 @@ import {
     StreamType,
     VoiceConnection
 } from "@discordjs/voice";
-import {SongCategory} from "./SongCategory";
-import {Song} from "./Song";
 import {createReadStream} from "node:fs";
 import {join} from "path";
 import categories from "../data/categories";
+import {SongCategory} from "../types/SongCategory";
+import {Song} from "../types/Song";
 
 export class AmbiencePlayerManager {
     private static players: Collection<string, AudioPlayer> = new Collection();
@@ -38,9 +38,9 @@ export class AmbiencePlayerManager {
             AmbiencePlayerManager.players.delete(song.title);
         }
 
-        player.on("debug", (message) => {
-            console.log(message);
-        });
+        // player.on("debug", (message) => {
+        //     console.log(message);
+        // });
 
         player.on(AudioPlayerStatus.Idle, () => {
             // The audio player will be in this state when there is no audio resource for it to play

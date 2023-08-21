@@ -1,6 +1,6 @@
-import {CommandCategory} from "../types/CommandCategory";
 import {SlashCommandBuilder} from "discord.js";
 import {Command} from "../types/Command";
+import {CommandCategory} from "../interfaces/CommandCategory";
 
 
 export default {

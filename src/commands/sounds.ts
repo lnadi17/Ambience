@@ -1,7 +1,7 @@
-import {CommandCategory} from "../types/CommandCategory";
 import {SlashCommandBuilder} from "discord.js";
 import {getAllSoundsEmbed} from "../scripts/getEmbeds";
 import {Command} from "../types/Command";
+import {CommandCategory} from "../interfaces/CommandCategory";
 
 export default {
     usage: "`/sounds`",

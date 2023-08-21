@@ -1,8 +1,8 @@
-import {CommandCategory} from "../types/CommandCategory";
 import {SlashCommandBuilder} from "discord.js";
 import {getCategoriesEmbed, getCategorySoundsEmbed} from "../scripts/getEmbeds";
 import categories from "../data/categories";
 import {Command} from "../types/Command";
+import {CommandCategory} from "../interfaces/CommandCategory";
 
 export default {
     usage: "`/categories` or `/categories [category_name]`",

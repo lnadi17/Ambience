@@ -1,9 +1,9 @@
-import {CommandCategory} from "../types/CommandCategory";
 import {Message, SlashCommandBuilder} from "discord.js";
 import {connectToChannel, getRandomSound} from "../utils";
-import {AmbienceClient} from "../types/AmbienceClient";
 import {getPlayEmbed, getPlayErrorEmbed, getRandomEmbed, getWarningEmbed} from "../scripts/getEmbeds";
 import {Command} from "../types/Command";
+import {AmbienceClient} from "../interfaces/AmbienceClient";
+import {CommandCategory} from "../interfaces/CommandCategory";
 
 export default {
     usage: "`/random`",
