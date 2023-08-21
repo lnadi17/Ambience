@@ -193,6 +193,13 @@ export function getPlayComponents() {
     return rows;
 }
 
+export function getPlayComponentsEmbed() {
+    return new EmbedBuilder()
+        .setColor('#0099ff')
+        .setTitle('🎶 Ambience Radio 🎶')
+        .setDescription("Please select a category")
+}
+
 function getCategoryButton(category: SongCategory) {
     return new ButtonBuilder()
         .setLabel(`${category.emoji} ${category.name}`)
@@ -201,5 +208,8 @@ function getCategoryButton(category: SongCategory) {
 }
 
 function getSongButton(song: Song) {
-
+    return new ButtonBuilder()
+        .setLabel(`${song.title}`)
+        .setStyle(ButtonStyle.Primary)
+        .setCustomId(`song_${song.title}`)
 }

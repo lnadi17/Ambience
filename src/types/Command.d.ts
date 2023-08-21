@@ -4,12 +4,13 @@ import {
     ChatInputCommandInteraction,
     SlashCommandBuilder
 } from "discord.js";
+import {AmbienceClient} from "./AmbienceClient";
 
 export interface Command {
     type: CommandType
     data: SlashCommandBuilder,
     category: CommandCategory;
     usage: string;
-    execute: (interaction: ChatInputCommandInteraction<any>, ...args: any) => Promise<void>;
-    autocomplete: (interaction: AutocompleteInteraction<any>, ...args: any) => Promise<void>;
+    execute: (interaction: ChatInputCommandInteraction<any>, bot?: AmbienceClient) => Promise<void>;
+    autocomplete: (interaction: AutocompleteInteraction<any>, bot?: AmbienceClient) => Promise<void>;
 }

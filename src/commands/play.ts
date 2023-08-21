@@ -2,7 +2,13 @@ import {CommandCategory} from "../types/CommandCategory";
 import {AutocompleteInteraction, SlashCommandBuilder} from "discord.js";
 import {connectToChannel, getSoundsList} from "../utils";
 import {AmbienceClient} from "../types/AmbienceClient";
-import {getPlayComponents, getPlayEmbed, getPlayErrorEmbed, getWarningEmbed} from "../scripts/getEmbeds";
+import {
+    getPlayComponents,
+    getPlayComponentsEmbed,
+    getPlayEmbed,
+    getPlayErrorEmbed,
+    getWarningEmbed
+} from "../scripts/getEmbeds";
 import {Command} from "../types/Command";
 
 export default {
@@ -30,10 +36,13 @@ export default {
                 }
             } else {
                 // Return interactive sound list
-                await interaction.reply({components: getPlayComponents()});
+                await interaction.reply({embeds: [getPlayComponentsEmbed()], components: getPlayComponents()});
             }
         } else {
-            await interaction.reply({embeds: [getWarningEmbed("Ambience Radio", "You need to be in the voice channel to use this command")], ephemeral: true});
+            await interaction.reply({
+                embeds: [getWarningEmbed("Ambience Radio", "You need to be in the voice channel to use this command")],
+                ephemeral: true
+            });
         }
     },
     autocomplete: async (interaction: AutocompleteInteraction<any>) => {
@@ -49,7 +58,7 @@ export default {
         const filtered = choices.filter(choice => choice.toLowerCase().startsWith(focusedValue));
         const limited = filtered.slice(0, 25);
         await interaction.respond(
-            limited.map(choice => ({ name: choice, value: choice })),
+            limited.map(choice => ({name: choice, value: choice})),
         );
     },
 } as Command;
