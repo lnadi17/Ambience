@@ -55,7 +55,7 @@ export async function connectToChannel(channel: VoiceBasedChannel) {
 
 export async function getAllCommands(): Promise<Command[]> {
     const commandsPath = join(__dirname, 'commands');
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
+    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
     const commandPromises: Promise<any>[] = [];
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
