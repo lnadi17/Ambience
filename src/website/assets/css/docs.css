@@ -75,6 +75,10 @@
   background-color: #5763e9;
 }
 
+.btn-invite {
+  background-color: #5763e9 !important;
+}
+
 .darkModeContainer .docs-article h5 {
   color: #b8bdc7;
 }
