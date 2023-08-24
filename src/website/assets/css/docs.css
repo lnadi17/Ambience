@@ -16,7 +16,7 @@
 }
 
 .darkModeContainer .header{
-    background: #0d2f67 !important;
+    background: #2c2e32 !important;
 }
 
 .darkModeContainer .docs-sidebar-toggler span{
@@ -35,11 +35,11 @@
 }
 
 .darkModeContainer .docs-nav .nav-link.active .theme-icon-holder{
-  background: #174888;
+  background: #5763e9;
 }
 
 .darkModeContainer .docs-sidebar{
-    background-color: #4a80c5;
+    background-color: #2c2e32;
 }
 
 .darkModeContainer .form-control{
@@ -49,6 +49,10 @@
 
 .darkModeContainer .docs-nav .nav-link{
     color: #e4eeff !important;
+}
+
+.darkModeContainer .docs-nav .nav-link.active{
+    color: #5763e9 !important;
 }
 
 .darkModeContainer .docs-article{
@@ -68,14 +72,14 @@
 }
 
 .darkModeContainer .docs-nav .nav-link.active:before{
-  background-color:#174888;
+  background-color: #5763e9;
 }
 
 .darkModeContainer .docs-article h5 {
-  color: #6e92ce;
+  color: #b8bdc7;
 }
 .darkModeContainer .docs-article h3 {
-  color: #6e92ce;
+  color: #bbc9de;
 }
 
 .darkModeContainer .docs-article strong{
@@ -107,7 +111,7 @@
   }
 
   .darkModeContainer{
-      background-color: #0f2c52 !important;
+      background-color: #323438 !important;
   }
 
   .slider {
