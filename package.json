@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/angelina-tsuboi/Ambience"
+    "url": "git+https://github.com/lnadi17/Ambience"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/angelina-tsuboi/Ambience/issues"
+    "url": "https://github.com/lnadi17/Ambience/issues"
   },
-  "homepage": "https://github.com/angelina-tsuboi/Ambience/blob/master/README.md",
+  "homepage": "https://github.com/lnadi17/Ambience/blob/master/README.md",
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.16.0",
