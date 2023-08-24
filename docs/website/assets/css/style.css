@@ -123,7 +123,7 @@ transition:0.25s;
   padding: 1rem;
   border-color: transparent;
   border-radius: 5px;
-  width: 18rem;
+  width:fit-content;
 }
 
 
