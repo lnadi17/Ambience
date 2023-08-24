@@ -7,7 +7,6 @@
     "dev": "ts-node src/index.ts",
     "start": "tsc --build && node dist/index.js",
     "build": "tsc --build",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "register": "tsc --build && node register.js",
     "check": "tsc --build && node checkCategories.js"
   },
