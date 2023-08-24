@@ -32,7 +32,7 @@ Ambience Features:
 * 10+ categories and 50+ handpicked songs to choose from
 * Open source and community-driven
 
-In the future, Ambience plans to improve audio quality, add more sound categories, and add more features depending on our customer's needs. If you would like to recommend a feature, please visit [this link](https://github.com/angelina-tsuboi/Ambience/issues).
+In the future, Ambience plans to improve audio quality, add more sound categories, and add more features depending on our customer's needs. If you would like to recommend a feature, please visit [this link](https://github.com/lnadi17/Ambience/issues).
 
 ## Built With
 
@@ -49,7 +49,7 @@ To get a local copy up and running follow these simple example steps.
 
 1. Clone the repo
 ```sh
-git clone https://github.com/angelina-tsuboi/Ambience.git
+git clone https://github.com/lnadi17/Ambience.git
 ```
 2. Install NPM packages
 ```sh
@@ -62,7 +62,7 @@ node index.ts
 
 ## Usage
 
-Please visit the [Documentation page](https://angelina-tsuboi.github.io/Ambience/website/docs.html) on the Ambience site to view all the commands for the bot. 
+Please visit the [Documentation page](https://lnadi17.github.io/Ambience/website/docs.html) on the Ambience site to view all the commands for the bot. 
 If you encounter any difficulties, please join our [Discord server](https://discord.com/invite/w3Tp9x88Nw) to receive the help you need.
 
 ## Contributing
