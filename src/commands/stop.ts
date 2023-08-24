@@ -5,7 +5,7 @@ import {Command} from "../types/Command";
 import {CommandCategory} from "../interfaces/CommandCategory";
 
 export default {
-    usage: "`/stop`",
+    usage: ["/stop"],
     data: new SlashCommandBuilder().setName("stop").setDescription("Stops current sound"),
     category: CommandCategory.Sound,
     execute: async (interaction) => {

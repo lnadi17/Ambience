@@ -17,7 +17,7 @@ import {CommandCategory} from "../interfaces/CommandCategory";
 import {AmbienceClient} from "../interfaces/AmbienceClient";
 
 export default {
-    usage: "`/play` or `/play [sound]`",
+    usage: ["/play", "/play [sound]"],
     data: new SlashCommandBuilder().setName("play").setDescription("Plays a specified sound")
         .addStringOption(option =>
             option

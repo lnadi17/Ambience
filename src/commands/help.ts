@@ -6,7 +6,7 @@ import {CommandCategory} from "../interfaces/CommandCategory";
 import {AmbienceClient} from "../interfaces/AmbienceClient";
 
 export default {
-    usage: "`/help` or `/help [command]`",
+    usage: ["/help","/help [command]"],
     data: new SlashCommandBuilder().setName("help").setDescription("Gives information about bot commands")
         .addStringOption(option =>
             option.setName("command")

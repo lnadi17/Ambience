@@ -5,7 +5,7 @@ import {Command} from "../types/Command";
 import {CommandCategory} from "../interfaces/CommandCategory";
 
 export default {
-    usage: "`/categories` or `/categories [category_name]`",
+    usage: ["/categories", "/categories [category_name]"],
     data: new SlashCommandBuilder().setName("categories").setDescription("Lists all sound categories")
         .addStringOption(option =>
             option.setName("category")

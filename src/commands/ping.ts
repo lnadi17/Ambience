@@ -4,7 +4,7 @@ import {CommandCategory} from "../interfaces/CommandCategory";
 
 
 export default {
-    usage: "`/ping`",
+    usage: ["/ping"],
     data: new SlashCommandBuilder().setName("ping").setDescription("Replies with Pong!"),
     category: CommandCategory.Info,
     execute: async (interaction) => {
