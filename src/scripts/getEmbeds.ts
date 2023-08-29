@@ -10,7 +10,7 @@ export function getInviteEmbed() {
         .setColor('#0099ff')
         .setTitle('Thanks for Inviting Ambience!')
         .setDescription(`Use the command \`/help\` to see all commands. \n \
-         For more information please visit the [Ambience Website](https://angelina-tsuboi.github.io/Ambience/). \
+         For more information please visit the [Ambience Website](https://lnadi17.github.io/Ambience/). \
          Please consider joining our [Discord server](https://discord.com/invite/w3Tp9x88Nw) \
          to meet people within our community. \n`)
         .addFields([
@@ -30,8 +30,8 @@ export function getInviteEmbed() {
 
 export async function getHelpEmbed() {
     let text =
-        '📄 [Click Here](https://angelina-tsuboi.github.io/Ambience/website/docs.html#section-3) to View All Commands \n\n ' +
-        '🛠 Need Help? Please visit our [Troubleshooting page](https://angelina-tsuboi.github.io/Ambience/website/docs.html#section-6) \n\n ' +
+        '📄 [Click Here](https://lnadi17.github.io/Ambience/website/docs.html#section-3) to View All Commands \n\n ' +
+        '🛠 Need Help? Please visit our [Troubleshooting page](https://lnadi17.github.io/Ambience/website/docs.html#section-6) \n\n ' +
         '🌌 New to Ambience? [Join our community](https://discord.gg/w3Tp9x88Nw) \n\n';
     let musicText = "";
     let musicCommands = await getCommandsForCategory(CommandCategory.Sound);
