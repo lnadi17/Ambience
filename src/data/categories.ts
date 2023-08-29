@@ -160,7 +160,7 @@ const categories: SongCategory[] = [
                 title: "Dvorak - Symphony No. 9",
             },
             {
-                title: "Beethoven - 7th Symphony - 2nd movement",
+                title: "Beethoven - 7th Symphony - 2nd Movement",
             }
         ]
     },
@@ -208,7 +208,7 @@ const categories: SongCategory[] = [
                 title: "Requiem For a Dream",
             },
             {
-                title: "Girl with a Dragon Tattoo",
+                title: "Girl With a Dragon Tattoo",
             }
         ]
     },
