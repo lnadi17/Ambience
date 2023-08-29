@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# After each commit on master (GitHub), it will switch to the Heroku branch and cherry-pick that commit into it. Then, switch back to master.
+# After each commit on master (GitHub), it will switch to the Heroku branch and fast-forward to master. Then, switch back to master.
 # This makes the committing flow seamless so all you have to do is push (which is safer done manually than with a hook)
 
 ERR='[ERR] '
@@ -17,17 +17,17 @@ then
     echo $space
     
     echo "${WARN}Executing post-commit script (cherry-pick)..."
-    commitID=`git rev-parse HEAD`
+    # commitID=`git rev-parse HEAD`
     
     if git checkout $heroku; then
-        if git cherry-pick $commitID; then
-            echo "${SUCCESS}Cherry picked $commitID into $heroku branch $space"
+        if git merge master --ff-only; then
+            echo "${SUCCESS}Fast-forwarded $heroku to $gtihub branch $space"
             if ! git checkout $github; then
                 echo "${ERR}Couldn't checkout to $github $space"
                 exit 1
             fi
         else
-            echo "${ERR}Failed to cherry pick $commitID into $heroku branch. Do it manually $space"
+            echo "${ERR}Failed to fast-forward $heroku to $github. Do it manually $space"
             exit 1
         fi
     else
