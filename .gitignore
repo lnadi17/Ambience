@@ -2,4 +2,6 @@ data/config.js
 node_modules
 .env
 dist/
+**/.DS_Store
+.vscode
 sounds/

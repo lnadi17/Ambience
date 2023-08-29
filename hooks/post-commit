@@ -33,8 +33,7 @@ then
     else
         echo "${ERR}Couldn't checkout to $heroku $space"
         exit 1
-    fi
-    
+    fiheroku container:login
 fi
 
 exit 0
