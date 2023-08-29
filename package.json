@@ -3,18 +3,22 @@
   "version": "1.0.0",
   "description": "Ambience is a Discord bot designated to help you focus and work with the use of calming and soothing background noise.",
   "main": "src/index.ts",
+  "engines": {
+    "node": "19.x"
+  },
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "start": "tsc --build && node dist/index.js",
+    "start": "node dist/index.js",
     "build": "tsc --build",
-    "register": "tsc --build && node register.js",
-    "check": "tsc --build && node checkCategories.js"
+    "register": "node register.js",
+    "check": "node checkCategories.js",
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lnadi17/Ambience"
   },
-  "author": "",
+  "author": "Luka Nadiradze",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/lnadi17/Ambience/issues"
@@ -28,6 +32,7 @@
     "sodium": "^3.0.2"
   },
   "devDependencies": {
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "typescript": "^5.2.2"
   }
 }
