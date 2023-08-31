@@ -40,9 +40,6 @@ const categories: SongCategory[] = [
                 title: "Waterfall",
             },
             {
-                title: "Garden",
-            },
-            {
                 title: "Thunderstorm",
             }
         ]
@@ -115,13 +112,13 @@ const categories: SongCategory[] = [
         emoji: "✈️",
         songs: [
             {
-                title: "Calm Airplane",
+                title: "Lightning Storm While Flying",
             },
             {
                 title: "Jet Cabin",
             },
             {
-                title: "White Noise",
+                title: "Cabin White Noise",
             }
         ]
     },
@@ -133,7 +130,7 @@ const categories: SongCategory[] = [
                 title: "Cafe and Jazz",
             },
             {
-                title: "Cozy Cafe",
+                title: "Oldies Music Cafe",
             },
             {
                 title: "Social Cafe",
@@ -242,6 +239,15 @@ const categories: SongCategory[] = [
             },
             {
                 title: "Minecraft",
+            },
+            {
+                title: "Heroes of Might and Magic",
+            },
+            {
+                title: "Halo",
+            },
+            {
+                title: "The Witcher",
             },
             {
                 title: "Undertale",
