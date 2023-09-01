@@ -8,6 +8,6 @@ export default {
     data: new SlashCommandBuilder().setName("ping").setDescription("Replies with Pong!"),
     category: CommandCategory.Info,
     execute: async (interaction) => {
-        await interaction.reply(`Pong!`);
+        await interaction.reply(`🏓 Pong! ${Math.round(interaction.client.ws.ping)}ms`);
     }
 } as Command;
